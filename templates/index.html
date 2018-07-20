@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<head>
+    <title>
+        Test Web Socket
+    </title>
+    <script>
+        function websocketConnect() {
+            if (!window.WebSocket) {
+                if (window.MozWebSocket) {
+                    window.WebSocket = window.MozWebSocket;
+                } else {
+                    var tmp = document.createElement('p');
+                    tmp.innerHTML = 'Your browser does not supportwebsocket!';
+                    document.getElementById('msg').append(tmp);
+                }
+            }
+            ws = new WebSocket('ws://127.0.0.1:8989/statistics');
+            document.getElementById('send').onclick = function () {
+                ws.send(document.getElementById('input').value.toString())
+            };
+            window.onbeforeunload = function () {
+                ws.onclose = function () {
+                    console.log('Websocket Disconnet!')
+                };
+                ws.close()
+            };
+            ws.onopen = function (evt) {
+                var tmp = document.createElement('p');
+                tmp.innerHTML = 'Websocket Connected!';
+                document.getElementById('msg').append(tmp);
+                ws.send('{"name":"liwan", "age":18}')
+            };
+            ws.onmessage = function (evt) {
+                var tmp = document.createElement('li');
+                tmp.innerHTML = evt.data;
+                document.getElementById('msg').append(tmp);
+                //document.getElementById('msg').append(evt.data);
+            }
+        }
+    </script>
+</head>
+<html>
+    <body>
+    <p>Test Web Socket</p>
+    <button onclick="websocketConnect()">Connect</button>
+    <input id="input"> </input>
+    <button id="send">Send</button>
+    <div id="msg"></div>
+    </body>
+</html>
