@@ -6,7 +6,7 @@ from datetime import date
 from kafka import KafkaConsumer
 from flask import Blueprint, jsonify, request,Flask
 from flask_socketio import SocketIO
-from util.mysql import mysql
+from db.mysql import mysql
 from util.job import job
 from util.error import get_error_resp
 model_path = '/home/model/'

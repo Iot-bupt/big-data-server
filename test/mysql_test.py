@@ -16,7 +16,7 @@ data = cursor.fetchall()
 print(data)
 """
 
-import util.mysql as mysql
+import db.mysql as mysql
 db = mysql.mysql()
 # da = list(db.select('show tables'))
 # print(da)

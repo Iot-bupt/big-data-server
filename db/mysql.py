@@ -40,5 +40,20 @@ class mysql():
             print(e)
             print("Error: unable to fetch data")
 
+    def get_tables(self):
+        for table_name in list(self.select("show tables")):
+            table_name = table_name[0]
+            #print(table_name)
+            table = {'table_name': table_name}
+            table['cloumns'] = [item[0] \
+                                for item in list(self.select("desc %s" % table_name))]
+            #print(table)
+            yield table
+
     def close(self):
         self.db.close()
+
+if __name__ == '__main__':
+    db = mysql()
+    print(list(db.get_tables()))
+

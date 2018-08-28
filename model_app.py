@@ -72,8 +72,8 @@ def create_app():
         app_id = int(time.time())
         app_input = json.dumps(app_input)
         sql_insert = "insert into app(app_id, app_name, model_id, app_input, app_output, tenant_id)" \
-                     + " values(%d, '%s', %d, '%s', '%s', %d)" \
-                      % (app_id, app_name, model_id, app_input, app_output, tenant_id)
+                     + " values(%d, '%s', %d, '%s', '%s', %d, '%s')" \
+                      % (app_id, app_name, model_id, app_input, app_output, tenant_id, '1970-01-11 00:00:00')
         #print(sql_insert)
         db.insert(sql_insert)
         db.close()
