@@ -1,9 +1,12 @@
 import pymysql
+import pandas as pd
+from sqlalchemy import create_engine
 
 class mysql():
     def __init__(self, host='39.104.165.155', user='root', passwd='root', dbname='BUPT_IOT'):
         self.db = pymysql.connect(host, user, passwd, dbname)
         self.cursor = self.db.cursor()
+        self.engine = create_engine('mysql+pymysql://'+user+':'+passwd+'@'+host+':3306/'+dbname)
 
     def insert(self, sql):
         try:
@@ -52,6 +55,15 @@ class mysql():
 
     def close(self):
         self.db.close()
+
+    def sql_exec(self,sql):
+        try:
+            df = pd.read_sql_query(sql, self.engine)
+            return df
+        except Exception as e:
+            print(e)
+            print("Error: unable to execute sql query")
+
 
 if __name__ == '__main__':
     db = mysql()

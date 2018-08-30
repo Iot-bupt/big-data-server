@@ -3,6 +3,7 @@ from analysis import analysis
 from model import model
 from model_app import model_app
 from device import device
+from SQL import sql
 
 app = Flask(__name__)
 
@@ -10,6 +11,7 @@ app.register_blueprint(analysis, url_prefix='/api/analysis')
 app.register_blueprint(model, url_prefix='/api/model')
 app.register_blueprint(model_app, url_prefix='/api/app')
 app.register_blueprint(device, url_prefix='/api/device')
+app.register_blueprint(sql, url_prefix='/api/sql')
 
 if __name__ == '__main__':
     app.run(port=8092, host='0.0.0.0',debug=True)
