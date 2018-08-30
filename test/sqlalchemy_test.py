@@ -1,6 +1,6 @@
 import pandas as pd
 from sqlalchemy import create_engine
-
+"""
 engine = create_engine('mysql+pymysql://root:root@172.24.32.169:3306/BUPT_IOT')
 
 # df = pd.DataFrame({'id':[1,None,3,None],'num':[None,34,None,89]})
@@ -81,3 +81,10 @@ args = {
 data = Data('mydf', engine, args=args)
 data.etl(target='test')
 print(data.df)
+"""
+df = pd.DataFrame({"test":['123-456-789']})
+print(df)
+tmp = df['test'].str.split('-', expand=True)
+rename = {i:'test_split_'+str(i) for i in tmp.columns}
+tmp.rename(columns=rename, inplace=True)
+print(df.join(tmp))
