@@ -5,7 +5,9 @@ etl = Blueprint('etl', __name__)
 @etl.route('/transform', methods=['POST'])
 def transform():
     try:
-        data = json.loads(request.get_data().decode('utf-8'))
+        #data = json.loads(request.get_data().decode('utf-8'))
+        data = request.get_json()
+        assert data is not None, 'must post json object!'
         print(data)
         assert 'source_table' in data, 'missing parameters source table name!'
         source = data.get('source_table')
@@ -33,9 +35,43 @@ def transform():
         return resp
     except Exception as e:
         print(e)
-        return get_error_resp(e)
+        return get_error_resp(e, trans2str=False)
 
-@etl.route('/upload-csv-file')
+@etl.route('/upload-csv-file', methods=['POST'])
 def upload_csv_file():
-    pass
+    try:
+        # data = request.values.get('target_table')
+        # print(data)
+        assert 'csv_file' in request.files, 'must post csv file with key "csv_file"!"'
+        file = request.files['csv_file']
+        filename = file.filename
+        df = pd.read_csv(file)
+        #print(df)
+        target = 'file_' + filename.replace('.csv', '')
+        """
+        if data is None:
+            db_con_args = {}
+            if 'target_table' in data:
+                target = data['target']
+            if 'host' in data and 'user' in data and 'passwd' in data and 'dbname' in data:
+                db_con_args['host'] = data['host']
+                db_con_args['user'] = data['user']
+                db_con_args['passwd'] = data['passwd']
+                db_con_args['dbname'] = data['dbname']
+                engine = get_mysql_engine(db_con_args)
+        else:
+            engine = get_mysql_engine(mysql_args)
+        """
+        engine = get_mysql_engine(mysql_args)
+        length = len(df.index)
+        df.to_sql(name=target, con=engine,if_exists='append', index=False)
+        res = {'status':True,
+               'database table name': target,
+               'length of data  insert into database': length}
+        resp = jsonify(res)
+        resp.headers['Access-Control-Allow-Origin'] = '*'
+        return resp
+    except Exception as e:
+        print(e)
+        return get_error_resp(e, trans2str=False)
 
