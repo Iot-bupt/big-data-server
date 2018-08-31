@@ -207,6 +207,7 @@ if __name__ == '__main__':
                             '1':[908, 201],
                             '2':[None, 755],
                             '3':[574,7665]})
+    data.save('test')
     # print(data.df)
     #
     # data.filter([{'column':'test', 'cmp' : 'like', 'value':'-4'},
@@ -231,4 +232,4 @@ if __name__ == '__main__':
             [{"source_column": "hah", "split_flag": "-", "drop_source_column": 0},
             {"source_column": "test", "split_flag": "-", "drop_source_column": 1}]}
     ])
-    print(data.df)
+    #print(data.save('20180831_09test'))
