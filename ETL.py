@@ -48,21 +48,27 @@ def upload_csv_file():
         df = pd.read_csv(file)
         #print(df)
         target = 'file_' + filename.replace('.csv', '')
-        """
-        if data is None:
+        data = None
+        try:
+            data = json.loads(request.values.get('args'))
+            print(data)
+        except:
+            print('not a json string')
+        if data is not None:
             db_con_args = {}
             if 'target_table' in data:
-                target = data['target']
+                target = data['target_table']
             if 'host' in data and 'user' in data and 'passwd' in data and 'dbname' in data:
                 db_con_args['host'] = data['host']
                 db_con_args['user'] = data['user']
                 db_con_args['passwd'] = data['passwd']
                 db_con_args['dbname'] = data['dbname']
                 engine = get_mysql_engine(db_con_args)
+            else:
+                engine = get_mysql_engine(mysql_args)
         else:
             engine = get_mysql_engine(mysql_args)
-        """
-        engine = get_mysql_engine(mysql_args)
+        #engine = get_mysql_engine(mysql_args)
         length = len(df.index)
         df.to_sql(name=target, con=engine,if_exists='append', index=False)
         res = {'status':True,
