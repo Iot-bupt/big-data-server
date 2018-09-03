@@ -1,9 +1,11 @@
+# -*- coding: utf-8 -*-
 from config import *
 from analysis import analysis
 from model import model
 from model_app import model_app
 from device import device
 from SQL import sql
+from HDFS import hdfs
 from ETL import etl
 
 app = Flask(__name__)
@@ -13,6 +15,7 @@ app.register_blueprint(model, url_prefix='/api/model')
 app.register_blueprint(model_app, url_prefix='/api/app')
 app.register_blueprint(device, url_prefix='/api/device')
 app.register_blueprint(sql, url_prefix='/api/sql')
+app.register_blueprint(hdfs, url_prefix='/api/hdfs')
 app.register_blueprint(etl, url_prefix='/api/etl')
 
 if __name__ == '__main__':
