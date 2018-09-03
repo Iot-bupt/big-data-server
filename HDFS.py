@@ -2,6 +2,7 @@ from config import *
 
 hdfs = Blueprint('hdfs', __name__)
 
+
 @hdfs.route('/getFiles', methods=['GET'])
 def getFiles():
     try:
