@@ -196,40 +196,73 @@ class Data():
 
 if __name__ == '__main__':
     from sqlalchemy import create_engine
-
-    engine = create_engine('mysql+pymysql://root:root@172.24.32.169:3306/BUPT_IOT')
+    import uuid
+    #
+    engine = create_engine('mysql+pymysql://root:root@172.24.32.169:3306/BUPT_IOT?charset=utf8')
     data = Data(source='mydf', source_engine=engine)
-    #data.drop(['index', 'id'])
-    #data.dropna(['id', 'num'])
-
-    data.df = pd.DataFrame({'hah':['109', '1-1'],
-                            'test':['123-456-789', '236-456-455'],
-                            '1':[908, 201],
-                            '2':[None, 755],
-                            '3':[574,7665]})
-    data.save('test')
+    # #data.drop(['index', 'id'])
+    # #data.dropna(['id', 'num'])
     # print(data.df)
     #
-    # data.filter([{'column':'test', 'cmp' : 'like', 'value':'-4'},
-    #              {'column': 'test', 'cmp': '==', 'value': '123-456-789'}])
-    #data.filter([{'column': 'index', 'cmp': '>=', 'value': 3}])
-    #data.fillna([{'column':'index', 'value':1000}, {'column':'id', 'value':'mean'}])
-    # data.split([{"source_column":"hah","split_flag":"-","drop_source_column":0},
-    #             {"source_column": "test", "split_flag": "-", "drop_source_column": 1}])
-    # data.merge([{"source_columns":["hah", "test"],"split_flag":"-","drop_source_columns":0},
-    #             {"source_columns": ["hah", "merge_hah_test"], "split_flag": "-", "drop_source_columns": 1}])
-    # data.rename({'1':'362846', '3':'34564', '6':'888'})
-    # data.math_func([{'function': 'mean', 'source_columns':['1','2', '3'], 'new_column_name':'ttsdffds'},
-    #                 {'function': 'min', 'source_columns': ['1', '2', '3'], 'drop_source_columns':0}])
+    # data.df = pd.DataFrame({'hah':['109', '1-1'],
+    #                         'test':['123-456-789', '236-456-455'],
+    #                         '1':[908, 201],
+    #                         '2':[None, 755],
+    #                         '3':[574,7665]})
+    # data.save('test')
+    # # print(data.df)
+    # #
+    # # data.filter([{'column':'test', 'cmp' : 'like', 'value':'-4'},
+    # #              {'column': 'test', 'cmp': '==', 'value': '123-456-789'}])
+    # #data.filter([{'column': 'index', 'cmp': '>=', 'value': 3}])
+    # #data.fillna([{'column':'index', 'value':1000}, {'column':'id', 'value':'mean'}])
+    # # data.split([{"source_column":"hah","split_flag":"-","drop_source_column":0},
+    # #             {"source_column": "test", "split_flag": "-", "drop_source_column": 1}])
+    # # data.merge([{"source_columns":["hah", "test"],"split_flag":"-","drop_source_columns":0},
+    # #             {"source_columns": ["hah", "merge_hah_test"], "split_flag": "-", "drop_source_columns": 1}])
+    # # data.rename({'1':'362846', '3':'34564', '6':'888'})
+    # # data.math_func([{'function': 'mean', 'source_columns':['1','2', '3'], 'new_column_name':'ttsdffds'},
+    # #                 {'function': 'min', 'source_columns': ['1', '2', '3'], 'drop_source_columns':0}])
+    # data.transform(transform_args=[
+    #     {'type':'merge','args':
+    #     [{"source_columns":["hah", "test"],"split_flag":"-","drop_source_columns":0},
+    #      {"source_columns": ["hah", "merge_hah_test"], "split_flag": "-", "drop_source_columns": 0}]},
+    #     {'type':'math','args':
+    #     [{'function': 'mean', 'source_columns': ['1', '2', '3'], 'new_column_name': 'ttsdffds'},
+    #      {'function': 'min', 'source_columns': ['1', '2', '3'], 'drop_source_columns': 0}]},
+    #     {'type': 'split', 'args':
+    #         [{"source_column": "hah", "split_flag": "-", "drop_source_column": 0},
+    #         {"source_column": "test", "split_flag": "-", "drop_source_column": 1}]}
+    # ],target='test2',save=True)
+    # #print(data.save('20180831_09test'))
+
+
+    from cassandra.cluster import Cluster
+    cluster = Cluster(contact_points=['39.104.165.155'])
+
+    session = cluster.connect('bupt_iot')
+
+    def pandas_factory(colnames, rows):
+        return pd.DataFrame(rows, columns=colnames)
+
+    session.row_factory = pandas_factory
+    session.default_fetch_size = None
+    sql_query = "SELECT * FROM group;"
+    result = session.execute(sql_query)
+    df = result._current_rows
+
+    columns = df.columns.values.tolist()
+    for column in columns:
+        if type(df[column][0]) is uuid.UUID:
+            df[column] = df[column].astype(str)
+
+    data.df = df
+
+    # 将cassandra结果存入MySQL
     data.transform(transform_args=[
-        {'type':'merge','args':
-        [{"source_columns":["hah", "test"],"split_flag":"-","drop_source_columns":0},
-         {"source_columns": ["hah", "merge_hah_test"], "split_flag": "-", "drop_source_columns": 0}]},
-        {'type':'math','args':
-        [{'function': 'mean', 'source_columns': ['1', '2', '3'], 'new_column_name': 'ttsdffds'},
-         {'function': 'min', 'source_columns': ['1', '2', '3'], 'drop_source_columns': 0}]},
         {'type': 'split', 'args':
-            [{"source_column": "hah", "split_flag": "-", "drop_source_column": 0},
-            {"source_column": "test", "split_flag": "-", "drop_source_column": 1}]}
-    ])
-    #print(data.save('20180831_09test'))
+            [{"source_column": "id", "split_flag": "-", "drop_source_column": 0},
+            {"source_column": "name", "split_flag": "-", "drop_source_column": 1}]}
+    ],target='test3',save=True)
+
+    print(df)
