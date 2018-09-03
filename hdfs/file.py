@@ -9,6 +9,7 @@ class file():
             data = []
             for x in self.fs.list_status(path):
                 if x['owner'] == owner and x['group'] == group:
+                    x['path'] = path +'/'+x['pathSuffix']
                     data.append(x)
             return data
         except Exception as e:
