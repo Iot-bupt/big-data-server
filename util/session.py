@@ -10,7 +10,7 @@ def get_cassandra_session(args):
 
     CASSANDRA_HOST = args['host']
     CASSANDRA_PORT = args.get('port', 9042)
-    CASSANDRA_DB = args['db']
+    CASSANDRA_DB = args['dbname']
     cluster = Cluster(contact_points=CASSANDRA_HOST, port=CASSANDRA_PORT, auth_provider=auth_provider)
     session = cluster.connect(CASSANDRA_DB)
     return session

@@ -2,6 +2,10 @@ from config import *
 
 etl = Blueprint('etl', __name__)
 
+@etl.route('/table-struct', methods=['GET'])
+def get_table_struct():
+    data = request.args
+
 @etl.route('/transform', methods=['POST'])
 def transform():
     try:
