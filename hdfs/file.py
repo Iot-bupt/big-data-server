@@ -26,6 +26,12 @@ class file():
             print(e)
             status = {"status":"操作失败!","code":"500"}
 
+    def getFiletree(self):
+        try:
+            tree =[]
+        except Exception as e:
+            print(e)
+
 if __name__ == '__main__':
     file = file();
     print(file.getFiles("/","spark","supergroup"))
