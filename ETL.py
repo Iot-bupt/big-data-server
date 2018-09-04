@@ -92,7 +92,9 @@ def transform():
         # else:
         #     engine = get_mysql_engine(mysql_args)
         # db_data = Data(source=source,source_engine=engine)
+        # print(db_data.df['tenant_id'])
         count = db_data.transform(target=target,transform_args=transform_args,save=True)
+
         res = {'length of data before transform': count[0],
                'length of data after transform': count[1]}
         resp = jsonify(res)

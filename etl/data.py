@@ -69,8 +69,13 @@ class Data():
             source_session.row_factory = pandas_factory
             source_session.default_fetch_size = None
             query = 'select * from ' + source
-            result = session.execute(query)
+            result = source_session.execute(query)
             self.df = result._current_rows
+            columns = self.df.columns.values.tolist()
+            import uuid
+            for column in columns:
+                if type(self.df[column][0]) is uuid.UUID:
+                    self.df[column] = self.df[column].astype(str)
 
     def filter(self, filter_args):
         # if filter_args is None:
