@@ -7,7 +7,7 @@ import subprocess
 import pymysql
 from datetime import date
 from kafka import KafkaConsumer
-from flask import Blueprint, jsonify, request,Flask
+from flask import Blueprint, jsonify, request,Flask,Response
 from flask_socketio import SocketIO
 from db.mysql import mysql
 from hdfs.file import file
@@ -15,12 +15,13 @@ from etl.data import Data
 from etl.data import get_mysql_tables, get_cassandra_tables
 from util.job import job
 from util.error import get_error_resp
-from util.engine import get_mysql_engine
+from util.engine import *
 from util.session import get_cassandra_session
 
 model_path = '/home/model/'
 kafka_servers = ['kafka-service:9092']
-mysql_args = {'host':'172.24.32.169', 'user':'root', 'passwd':'root', 'dbname':'BUPT_IOT'}
+mysql_args = {'host':'172.24.32.169', 'user':'root', 'passwd':'root','port':3306, 'dbname':'BUPT_IOT'}
+other_args = {'host':'172.24.32.169', 'user':'root', 'passwd':'root','port':3306, 'dbname':'BUPT_IOT'}
 cassandra_args = {'host':['39.104.165.155'], 'dbname':'bupt_iot'}
 
 
