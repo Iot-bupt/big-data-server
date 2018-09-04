@@ -62,17 +62,36 @@ def transform():
             target = data['target']
         assert 'transform_args' in data, 'missing parameters transform arguments!'
         transform_args = data['transform_args']
-        print(transform_args)
-        db_con_args = {}
-        if 'host' in data and 'user' in data  and 'passwd' in data and 'dbname' in data:
-            db_con_args['host'] = data['host']
-            db_con_args['user'] = data['user']
-            db_con_args['passwd'] = data['passwd']
-            db_con_args['dbname'] = data['dbname']
-            engine = get_mysql_engine(db_con_args)
+        #print(transform_args)
+
+        db_type = data.get('db_type', 'mysql')
+        if db_type == 'nosql':
+            db_con_args = data.get('db_con_args', cassandra_args)
+            session = get_cassandra_session(db_con_args)
+            db_data = Data(source, db_type='nosql',
+                           source_session=session,
+                           target_engine=get_mysql_engine(mysql_args))
         else:
-            engine = get_mysql_engine(mysql_args)
-        db_data = Data(source=source,source_engine=engine)
+            if db_type == 'mysql':
+                get_engine = get_mysql_engine
+                db_con_args = data.get('db_con_args', mysql_args)
+                #print(db_con_args)
+            else:
+                get_engine = get_other_engine
+                db_con_args = data.get('db_con_args', other_args)
+            engine = get_engine(db_con_args)
+            db_data = Data(source=source, source_engine=engine)
+        #
+        # db_con_args = {}
+        # if 'host' in data and 'user' in data  and 'passwd' in data and 'dbname' in data:
+        #     db_con_args['host'] = data['host']
+        #     db_con_args['user'] = data['user']
+        #     db_con_args['passwd'] = data['passwd']
+        #     db_con_args['dbname'] = data['dbname']
+        #     engine = get_mysql_engine(db_con_args)
+        # else:
+        #     engine = get_mysql_engine(mysql_args)
+        # db_data = Data(source=source,source_engine=engine)
         count = db_data.transform(target=target,transform_args=transform_args,save=True)
         res = {'length of data before transform': count[0],
                'length of data after transform': count[1]}
