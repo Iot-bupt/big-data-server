@@ -53,7 +53,10 @@ class DBTool:
                 print(row[0])
                 sql_insertkey = "alter table new_table add (table_na,field_name,field_type,key_type) "
                 result = conn.execute_query(sql_insertkey)
-                print(result)
+                if result:
+                    print(result)
+                else:
+                    print('export fail')
 
 
 
