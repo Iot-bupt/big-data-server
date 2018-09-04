@@ -28,11 +28,33 @@ class file():
 
     def getFiletree(self):
         try:
-            tree =[]
+            return self.filetree('/')
         except Exception as e:
             print(e)
 
+    def filetree(self,path):
+        files=[]
+        if path == '/':
+           files.append(path)
+        else:
+            files = path.split('/')
+        list = []
+        for x in self.fs.list_status(path):
+            if x['type'] == 'DIRECTORY':
+                if path.endswith('/'):
+                    list.append(self.filetree(path+x['pathSuffix']))
+                else :
+                    list.append(self.filetree(path +'/'+ x['pathSuffix']))
+            else:
+                target = {'pathSuffix':x['pathSuffix'],'type':x['type']}
+                list.append(target)
+
+        return  {files[len(files)-1]:list}
+
+
+
+
 if __name__ == '__main__':
     file = file();
-    print(file.getFiles("/","spark","supergroup"))
+    print(file.getFiletree())
 

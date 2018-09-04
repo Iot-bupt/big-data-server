@@ -37,3 +37,18 @@ def deleteFiles():
     except Exception as e:
         print(e)
         return get_error_resp(e)
+
+@hdfs.route('/getFiletree', methods=['GET'])
+def getFiletree():
+    try:
+        data = {}
+        f = file()
+        data = f.filetree('/')
+        res = json.dumps(data, ensure_ascii=False)
+        resp = Response(res, mimetype='application/json')
+        # resp = jsonify(res)
+        resp.headers['Access-Control-Allow-Origin'] = '*'
+        return resp
+    except Exception as e:
+        print(e)
+        return get_error_resp(e)
