@@ -22,7 +22,7 @@ def getFiles():
         print(e)
         return get_error_resp(e)
 
-@hdfs.route('/deleteFiles', methods=['DELETE'])
+@hdfs.route('/deleteFiles', methods=['GET'])
 def deleteFiles():
     try:
         data = {}
