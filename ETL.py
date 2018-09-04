@@ -57,13 +57,10 @@ def transform():
         print(data)
         assert 'source_table' in data, 'missing parameters source table name!'
         source = data.get('source_table')
-        target = source + '_transform'
-        if  'target_table' in data:
-            target = data['target']
+        target = data.get('target_table', source + '_transform')
         assert 'transform_args' in data, 'missing parameters transform arguments!'
         transform_args = data['transform_args']
         #print(transform_args)
-
         db_type = data.get('db_type', 'mysql')
         if db_type == 'nosql':
             db_con_args = data.get('db_con_args', cassandra_args)
