@@ -7,7 +7,7 @@ import subprocess
 import pymysql
 from datetime import date
 from kafka import KafkaConsumer
-from flask import Blueprint, jsonify, request,Flask
+from flask import Blueprint, jsonify, request,Flask,Response
 from flask_socketio import SocketIO
 from db.mysql import mysql
 from hdfs.file import file
