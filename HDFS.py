@@ -13,8 +13,10 @@ def getFiles():
         f = file()
         data = f.getFiles(path,owner,group)
         res = json.dumps(data, ensure_ascii=False)
-        resp = jsonify(res)
+        resp = Response(res, mimetype='application/json')
+        #resp = jsonify(res)
         resp.headers['Access-Control-Allow-Origin'] = '*'
+        # resp.headers['content_type'] = 'application/json'
         return resp
     except Exception as e:
         print(e)
@@ -28,7 +30,8 @@ def deleteFiles():
         f = file()
         data = f.deleteFiles(path)
         res = json.dumps(data, ensure_ascii=False)
-        resp = jsonify(res)
+        resp = Response(res, mimetype='application/json')
+        # resp = jsonify(res)
         resp.headers['Access-Control-Allow-Origin'] = '*'
         return resp
     except Exception as e:

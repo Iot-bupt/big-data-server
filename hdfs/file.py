@@ -9,6 +9,9 @@ class file():
             data = []
             for x in self.fs.list_status(path):
                 if x['owner'] == owner and x['group'] == group:
+                    while path.endswith('/'):
+                        path = path[0:len(path)-1]
+                    x['path'] = path +'/'+x['pathSuffix']
                     data.append(x)
             return data
         except Exception as e:
@@ -22,6 +25,12 @@ class file():
         except Exception as e:
             print(e)
             status = {"status":"操作失败!","code":"500"}
+
+    def getFiletree(self):
+        try:
+            tree =[]
+        except Exception as e:
+            print(e)
 
 if __name__ == '__main__':
     file = file();
