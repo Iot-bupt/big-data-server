@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="858815c7-bbef-4644-9e7c-04ef2d6a6e53" name="Default" comment="完成提取数据库表结构存到新表">
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+    <list default="true" id="858815c7-bbef-4644-9e7c-04ef2d6a6e53" name="Default" comment="完成新表中根据表名实现增删改的接口">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/db/list_include all.py" beforeDir="false" afterPath="$PROJECT_DIR$/db/list_include all.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LIST.py" beforeDir="false" afterPath="$PROJECT_DIR$/LIST.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -14,7 +13,7 @@
   </component>
   <component name="CoverageDataManager">
     <SUITE FILE_PATH="coverage/big_data_server$mysql.coverage" NAME="mysql Coverage Results" MODIFIED="1535529709089" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/db" />
-    <SUITE FILE_PATH="coverage/big_data_server$big_data_server.coverage" NAME="big-data-server Coverage Results" MODIFIED="1536045099113" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/big_data_server$big_data_server.coverage" NAME="big-data-server Coverage Results" MODIFIED="1536115070926" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
   </component>
   <component name="DatabaseView">
     <option name="SHOW_INTERMEDIATE" value="true" />
@@ -46,24 +45,24 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="py" value="42" />
+          <entry key="py" value="43" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="Python" value="42" />
+          <entry key="Python" value="43" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="py" value="1180" />
-          <entry key="txt" value="15" />
+          <entry key="py" value="1188" />
+          <entry key="txt" value="41" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="PLAIN_TEXT" value="15" />
-          <entry key="Python" value="1179" />
+          <entry key="PLAIN_TEXT" value="41" />
+          <entry key="Python" value="1187" />
           <entry key="SQL" value="1" />
         </counts>
       </usages-collector>
@@ -116,10 +115,10 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/LIST.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="550">
-              <caret line="22" lean-forward="true" selection-start-line="22" selection-end-line="22" />
+            <state relative-caret-position="925">
+              <caret line="43" column="49" selection-start-line="43" selection-start-column="49" selection-end-line="43" selection-end-column="49" />
               <folding>
-                <marker date="1536114824323" expanded="true" signature="932:937" ph="..." />
+                <marker date="1536115483567" expanded="true" signature="933:938" ph="..." />
               </folding>
             </state>
           </provider>
@@ -389,7 +388,21 @@
       <option name="project" value="LOCAL" />
       <updated>1536047470945</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="完成新表中根据表名实现增删改的接口">
+      <created>1536115008097</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1536115008097</updated>
+    </task>
+    <task id="LOCAL-00005" summary="完成新表中根据表名实现增删改的接口">
+      <created>1536115225181</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1536115225181</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -438,7 +451,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="完成提取数据库表结构存到新表" />
-    <option name="LAST_COMMIT_MESSAGE" value="完成提取数据库表结构存到新表" />
+    <MESSAGE value="完成新表中根据表名实现增删改的接口" />
+    <option name="LAST_COMMIT_MESSAGE" value="完成新表中根据表名实现增删改的接口" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -591,10 +605,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/LIST.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="550">
-          <caret line="22" lean-forward="true" selection-start-line="22" selection-end-line="22" />
+        <state relative-caret-position="925">
+          <caret line="43" column="49" selection-start-line="43" selection-start-column="49" selection-end-line="43" selection-end-column="49" />
           <folding>
-            <marker date="1536114824323" expanded="true" signature="932:937" ph="..." />
+            <marker date="1536115483567" expanded="true" signature="933:938" ph="..." />
           </folding>
         </state>
       </provider>

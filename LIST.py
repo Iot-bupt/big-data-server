@@ -25,7 +25,7 @@ def insertTables():
 def deleteTables():
     try:
         data={}
-        sql = "DELETE FROM new_table WHERE table_na = ''"
+        sql = "DELETE FROM new_table WHERE table_na = '?'"
         db=mysql()
         result = db.sql_exec(sql)
         db.close()
@@ -41,7 +41,7 @@ def deleteTables():
 def updateTables():
     try:
         data={}
-        sql = "UPDATE new_table SET table_na = '' "
+        sql = "UPDATE new_table SET table_na = '?' "
         db=mysql()
         result = db.sql_exec(sql)
         db.close()
