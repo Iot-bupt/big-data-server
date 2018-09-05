@@ -4,7 +4,7 @@
     <inspection_tool class="PyPackageRequirementsInspection" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="ignoredPackages">
         <value>
-          <list size="41">
+          <list size="44">
             <item index="0" class="java.lang.String" itemvalue="python-systemd" />
             <item index="1" class="java.lang.String" itemvalue="unity-scope-chromiumbookmarks" />
             <item index="2" class="java.lang.String" itemvalue="defer" />
@@ -46,6 +46,9 @@
             <item index="38" class="java.lang.String" itemvalue="unity-scope-calculator" />
             <item index="39" class="java.lang.String" itemvalue="pygobject" />
             <item index="40" class="java.lang.String" itemvalue="Pillow" />
+            <item index="41" class="java.lang.String" itemvalue="cassandra-driver" />
+            <item index="42" class="java.lang.String" itemvalue="certifi" />
+            <item index="43" class="java.lang.String" itemvalue="requests" />
           </list>
         </value>
       </option>

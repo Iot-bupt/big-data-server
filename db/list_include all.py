@@ -3,7 +3,7 @@ import pymysql
 from sqlalchemy import create_engine
 
 
-class DBTool:
+class DBTool():
 
     conn = None
     cursor = None
@@ -51,7 +51,7 @@ class DBTool:
         if list:
             for row in list:
                 print(row[0])
-                sql_insertkey = "alter table new_table add (table_na,field_name,field_type,key_type) "
+                sql_insertkey = "INSERT INTO new_table(table_na,field_name,field_type,key_type) VALUES (?,?,?,?,)"
                 result = conn.execute_query(sql_insertkey)
                 if result:
                     print(result)
