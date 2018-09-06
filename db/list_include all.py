@@ -21,7 +21,6 @@ class DBTool():
             cursor=self.cursor
             cursor.execute(sql_string)
             self.conn.commit()
-            list = cursor.fetchall()
             return list
         except pymysql.Error as e:
             print("mysql execute error:", e)
@@ -36,32 +35,52 @@ class DBTool():
             print("mysql execute error:", e)
             raise
 
-    def main(self):
-        # conn_dict = {'host': '39.104.165.155', 'port': 3306, 'user': 'root', 'password': 'root', 'dbname': 'BUPT_IOT'}
-        # conn = DBTool(self.conn_dict)
-        sql_gettables = "select table_name from  information_schema.`TABLES` WHERE TABLE_SCHEMA = 'BUPT_IOT';"
-        list = self.execute_query(sql_gettables)
+    def select(self, sql):
+        try:
+            self.cursor.execute(sql)
+            row = self.cursor.fetchone()
+            while row:
+                yield row
+                row = self.cursor.fetchone()
+        except Exception as e:
+            print(e)
+            print("Error: unable to fetch data")
 
+    def get_tables(self):
+        for table_name in list(self.select("show tables")):
+            table_name = table_name[0]
+            # print(table_name)
+            table = {'table_name': table_name}
+            table_info = list(self.select("desc %s" % table_name))
+            # print(list(table_info))
+            table['field_name'] = [item[0] for item in table_info]
+            field_len = list(table['field_name']).__len__()
+            #print(field_len)
+            table['field_type'] = [item[1] for item in table_info]
+            table['key_type'] = [item[3] for item in table_info]
+            # print(table)
+            yield table
+
+
+    def inesrt_table(self):
         # sql_newtable = "create table new_table(table_na VARCHAR(20),field_name VARCHAR(20),field_type VARCHAR(20),key_type INT DEFAULT 1 )"
         # rs = self.execute_query(sql_newtable)
         # if rs:
         #     print('setup success')
         # else:
         #     print('setup fail')
-
-        if list:
-            for row in list:
-                # print(row[0])
-                sql_insertkey = "INSERT INTO new_table(table_na,field_name,field_type,key_type) VALUES ('b','a','a',1)"
+        tables = self.get_tables()
+        print(tables)
+        #print(type(tables['field_name']))
+        field_len = tables['field_name'].__len__()
+        for row0 in tables:
+            for row1 in range(field_len):
+                sql_insertkey = "INSERT INTO new_table(table_na,field_name,field_type,key_type) VALUES ('list(tables['table_name'])','list(tables['field_name'])','list(tables['field_type'])','list(tables['key_type'])')"
                 result = self.execute_query(sql_insertkey)
-                print(result)
-                # if result:
-                #     print(result)
-                # else:
-                #     print('export fail')
+                #print(result)
 
 
 
 if __name__ == '__main__':
     a = DBTool()
-    a.main()
+    a.inesrt_table()
