@@ -1,3 +1,4 @@
+#coding=utf-8
 import os
 import pymysql
 from sqlalchemy import create_engine
@@ -38,6 +39,81 @@ class DBTool:
         except pymysql.Error as e:
             print("mysql execute error:", e)
             raise
+    '''
+    pri 1 为主键 0 为非主键
+    type 字段类型
+    column 字段名 
+    sheet 表名
+    '''
+    def addColumn(self,sheet,column,type,pri):
+        try:
+            sql= ""
+            if pri == 0:
+                sql = "ALTER TABLE "+sheet+"ADD "+column+" "+type+";"
+            else:
+                prisql = "select * from new_table where table_na ="+sheet+"and key_type = 1;"
+                if len(self.execute_query(prisql)) ==0:
+                    sql = "ALTER TABLE "+sheet+"ADD "+column+type+" PRIMARY KEY;"
+                else:
+                    sql = "ALTER TABLE"+sheet+" DROP PRIMARY KEY;ALTER TABLE "+sheet+"ADD "+column+type+" PRIMARY KEY;"
+            sql = sql +"INSERT INTO new_table (table_na,field_name,field_type,key_type) VALUE ("+sheet+","+column+","+type+","+pri+");"
+            self.cursor.execute(sql)
+        except pymysql.Error as e:
+            print(e)
+            raise
+    '''
+    删除表字段
+    '''
+    def deleteColumn(self,sheet,column):
+        try:
+            sql = "ALTER TABLE "+sheet+ " DROP COLUMN "+column+" ; DELETE FROM new_table WHERE table_na= "+sheet+" and field_name = "+column;
+            self.cursor.execute(sql)
+        except pymysql.Error as e:
+            print(e)
+            raise
+    '''
+    修改表字段名称
+    '''
+
+
+    '''
+    修改表的字段属性
+    '''
+    def alterColumnType(self,sheet,column,type):
+        try:
+            sql = "ALTER TABLE"+sheet +" MODIFY COLUMN" +column+" "+type+ ";UPDATE new_table SET field_type= "+type+" where table_na="+sheet+"and field_name ="+column+";"
+            self.cursor.execute(sql)
+        except pymysql.Error as e:
+            print(e)
+            raise
+
+    '''
+    设置表的主键
+    '''
+    def addColumnPri(self,sheet,column):
+        try:
+            sql = ""
+            prisql = "select * from new_table where table_na =" + sheet + "and key_type = 1;"
+            if len(self.execute_query(prisql)) == 0:
+                sql = "ALTER TABLE " + sheet + "ADD " + column + type + " PRIMARY KEY;"
+            else:
+                sql = "ALTER TABLE" + sheet + " DROP PRIMARY KEY;ALTER TABLE " + sheet + "ADD " + column +" "+ type + " PRIMARY KEY;"
+            sql = sql + ";UPDATE new_table SET key_type= 1 where table_na="+sheet+"and field_name ="+column+";"
+            self.cursor.execute(sql)
+        except pymysql.Error as e:
+            print(e)
+            raise
+
+    '''
+    删除表的主键
+    '''
+    def deleteColumnPri(self,sheet,column):
+        try:
+            print()
+        except pymysql.Error as e:
+            print(e)
+            raise
+
 
     def main(self):
         conn_dict = {'host': '39.104.165.155',  'user': 'root', 'password': 'root', 'dbname': 'BUPT_IOT'}
