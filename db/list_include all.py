@@ -8,12 +8,11 @@ class DBTool():
     conn = None
     cursor = None
 
-    def __init__(self, conn_dict):
-        self.conn = pymysql.connect(host=conn_dict['host'],
-                                    port=conn_dict['port'],
-                                    user=conn_dict['user'],
-                                    passwd=conn_dict['password'],
-                                    dbname=conn_dict['dbname'])
+    def __init__(self, conn_dict={'host': '39.104.165.155', 'port': 3306, 'user': 'root', 'password': 'root', 'dbname': 'BUPT_IOT'}):
+        self.conn = pymysql.connect(conn_dict['host'],
+                                    conn_dict['user'],
+                                    conn_dict['password'],
+                                    conn_dict['dbname'])
         self.cursor = self.conn.cursor()
 
 
@@ -21,9 +20,8 @@ class DBTool():
         try:
             cursor=self.cursor
             cursor.execute(sql_string)
+            self.conn.commit()
             list = cursor.fetchall()
-            cursor.close()
-            self.conn.close()
             return list
         except pymysql.Error as e:
             print("mysql execute error:", e)
@@ -34,36 +32,36 @@ class DBTool():
             cursor = self.cursor
             cursor.execute(sql_string)
             self.conn.commit()
-            self.cursor.close()
-            self.conn.close()
         except pymysql.Error as e:
             print("mysql execute error:", e)
             raise
 
     def main(self):
-        conn_dict = {'host': '39.104.165.155', 'port': 3306, 'user': 'root', 'password': 'root', 'dbname': 'BUPT_IOT'}
-        conn = DBTool(conn_dict)
+        # conn_dict = {'host': '39.104.165.155', 'port': 3306, 'user': 'root', 'password': 'root', 'dbname': 'BUPT_IOT'}
+        # conn = DBTool(self.conn_dict)
         sql_gettables = "select table_name from  information_schema.`TABLES` WHERE TABLE_SCHEMA = 'BUPT_IOT';"
-        list = conn.execute_query(sql_gettables)
+        list = self.execute_query(sql_gettables)
 
-        sql_newtable = "create table new_table(table_na VARCHAR(20),field_name VARCHAR(20),field_type VARCHAR(20),key_type INT DEFAULT 1 )"
-        rs = conn.execute_query(sql_newtable)
-        if rs:
-            print('setup success')
-        else:
-            print('setup fail')
+        # sql_newtable = "create table new_table(table_na VARCHAR(20),field_name VARCHAR(20),field_type VARCHAR(20),key_type INT DEFAULT 1 )"
+        # rs = self.execute_query(sql_newtable)
+        # if rs:
+        #     print('setup success')
+        # else:
+        #     print('setup fail')
 
         if list:
             for row in list:
-                print(row[0])
-                sql_insertkey = "INSERT INTO new_table(table_na,field_name,field_type,key_type) VALUES (?,?,?,?,)"
-                result = conn.execute_query(sql_insertkey)
-                if result:
-                    print(result)
-                else:
-                    print('export fail')
+                # print(row[0])
+                sql_insertkey = "INSERT INTO new_table(table_na,field_name,field_type,key_type) VALUES ('b','a','a',1)"
+                result = self.execute_query(sql_insertkey)
+                print(result)
+                # if result:
+                #     print(result)
+                # else:
+                #     print('export fail')
 
 
 
 if __name__ == '__main__':
-    DBTool()
+    a = DBTool()
+    a.main()
