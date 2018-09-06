@@ -10,6 +10,7 @@ class DBTool():
 
     def __init__(self, conn_dict):
         self.conn = pymysql.connect(host=conn_dict['host'],
+                                    port=conn_dict['port'],
                                     user=conn_dict['user'],
                                     passwd=conn_dict['password'],
                                     dbname=conn_dict['dbname'])
@@ -40,7 +41,7 @@ class DBTool():
             raise
 
     def main(self):
-        conn_dict = {'host': '39.104.165.155',  'user': 'root', 'password': 'root', 'dbname': 'BUPT_IOT'}
+        conn_dict = {'host': '39.104.165.155', 'port': 3306, 'user': 'root', 'password': 'root', 'dbname': 'BUPT_IOT'}
         conn = DBTool(conn_dict)
         sql_gettables = "select table_name from  information_schema.`TABLES` WHERE TABLE_SCHEMA = 'BUPT_IOT';"
         list = conn.execute_query(sql_gettables)
