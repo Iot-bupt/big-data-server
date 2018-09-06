@@ -47,7 +47,11 @@ class DBTool():
         list = conn.execute_query(sql_gettables)
 
         sql_newtable = "create table new_table(table_na VARCHAR(20),field_name VARCHAR(20),field_type VARCHAR(20),key_type INT DEFAULT 1 )"
-        new_table = conn.execute_query(sql_newtable)
+        rs = conn.execute_query(sql_newtable)
+        if rs:
+            print('setup success')
+        else:
+            print('setup fail')
 
         if list:
             for row in list:
