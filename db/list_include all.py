@@ -49,16 +49,11 @@ class DBTool():
     def get_tables(self):
         for table_name in list(self.select("show tables")):
             table_name = table_name[0]
-            # print(table_name)
             table = {'table_name': table_name}
             table_info = list(self.select("desc %s" % table_name))
-            # print(list(table_info))
             table['field_name'] = [item[0] for item in table_info]
-            field_len = list(table['field_name']).__len__()
-            #print(field_len)
             table['field_type'] = [item[1] for item in table_info]
             table['key_type'] = [item[3] for item in table_info]
-            # print(table)
             yield table
 
 
@@ -69,18 +64,33 @@ class DBTool():
         #     print('setup success')
         # else:
         #     print('setup fail')
-        tables = self.get_tables()
+        tables = list(self.get_tables())
         print(tables)
-        #print(type(tables['field_name']))
-        field_len = tables['field_name'].__len__()
-        for row0 in tables:
-            for row1 in range(field_len):
-                sql_insertkey = "INSERT INTO new_table(table_na,field_name,field_type,key_type) VALUES ('list(tables['table_name'])','list(tables['field_name'])','list(tables['field_type'])','list(tables['key_type'])')"
-                result = self.execute_query(sql_insertkey)
-                #print(result)
+        for table in tables:
+            table_name = table['table_name']
+            field = table['field_name']
+            field_type = table['field_type']
+            key_type = table['key_type']
+            field_len = table['field_name'].__len__()
+            # print(field_len)
+            for row in range(field_len):
+                # print(row)
+                # sql_insertkey = "INSERT INTO new_table(table_na,field_name,field_type,key_type) VALUES ('list(tables['table_name'])','list(tables['field_name[row]'])','list(tables['field_type[row]'])',1)"
+                if key_type[row] == 'PRI':
+                    key = 1
+                else:
+                    key =0
+                sql_insertkey = "INSERT INTO new_table(table_na,field_name,field_type,key_type) VALUES ('%s','%s','%s',%d)" % (table_name,field[row],field_type[row],key)
+                self.execute_query(sql_insertkey)
+        print("success")
+        self.close()
+
+    def close(self):
+        self.conn.close()
 
 
 
 if __name__ == '__main__':
     a = DBTool()
     a.inesrt_table()
+    # print(list(a.get_tables()))

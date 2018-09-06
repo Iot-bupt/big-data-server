@@ -4,7 +4,7 @@
     <inspection_tool class="PyPackageRequirementsInspection" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="ignoredPackages">
         <value>
-          <list size="44">
+          <list size="94">
             <item index="0" class="java.lang.String" itemvalue="python-systemd" />
             <item index="1" class="java.lang.String" itemvalue="unity-scope-chromiumbookmarks" />
             <item index="2" class="java.lang.String" itemvalue="defer" />
@@ -49,6 +49,56 @@
             <item index="41" class="java.lang.String" itemvalue="cassandra-driver" />
             <item index="42" class="java.lang.String" itemvalue="certifi" />
             <item index="43" class="java.lang.String" itemvalue="requests" />
+            <item index="44" class="java.lang.String" itemvalue="python-dateutil" />
+            <item index="45" class="java.lang.String" itemvalue="feedparser" />
+            <item index="46" class="java.lang.String" itemvalue="pyzmq" />
+            <item index="47" class="java.lang.String" itemvalue="bleach" />
+            <item index="48" class="java.lang.String" itemvalue="oauthlib" />
+            <item index="49" class="java.lang.String" itemvalue="pyparsing" />
+            <item index="50" class="java.lang.String" itemvalue="notebook" />
+            <item index="51" class="java.lang.String" itemvalue="beautifulsoup4" />
+            <item index="52" class="java.lang.String" itemvalue="terminado" />
+            <item index="53" class="java.lang.String" itemvalue="python-engineio" />
+            <item index="54" class="java.lang.String" itemvalue="jupyter-client" />
+            <item index="55" class="java.lang.String" itemvalue="pexpect" />
+            <item index="56" class="java.lang.String" itemvalue="gunicorn" />
+            <item index="57" class="java.lang.String" itemvalue="ipykernel" />
+            <item index="58" class="java.lang.String" itemvalue="simplejson" />
+            <item index="59" class="java.lang.String" itemvalue="python-socketio" />
+            <item index="60" class="java.lang.String" itemvalue="jedi" />
+            <item index="61" class="java.lang.String" itemvalue="pyxdg" />
+            <item index="62" class="java.lang.String" itemvalue="ssh-import-id" />
+            <item index="63" class="java.lang.String" itemvalue="backcall" />
+            <item index="64" class="java.lang.String" itemvalue="widgetsnbextension" />
+            <item index="65" class="java.lang.String" itemvalue="PyMySQL" />
+            <item index="66" class="java.lang.String" itemvalue="Mako" />
+            <item index="67" class="java.lang.String" itemvalue="padme" />
+            <item index="68" class="java.lang.String" itemvalue="PyHDFS" />
+            <item index="69" class="java.lang.String" itemvalue="checkbox-support" />
+            <item index="70" class="java.lang.String" itemvalue="PyJWT" />
+            <item index="71" class="java.lang.String" itemvalue="decorator" />
+            <item index="72" class="java.lang.String" itemvalue="guacamole" />
+            <item index="73" class="java.lang.String" itemvalue="ptyprocess" />
+            <item index="74" class="java.lang.String" itemvalue="SQLAlchemy" />
+            <item index="75" class="java.lang.String" itemvalue="httplib2" />
+            <item index="76" class="java.lang.String" itemvalue="numpy" />
+            <item index="77" class="java.lang.String" itemvalue="pyasn1" />
+            <item index="78" class="java.lang.String" itemvalue="gevent-websocket" />
+            <item index="79" class="java.lang.String" itemvalue="XlsxWriter" />
+            <item index="80" class="java.lang.String" itemvalue="jupyter" />
+            <item index="81" class="java.lang.String" itemvalue="Flask" />
+            <item index="82" class="java.lang.String" itemvalue="ipywidgets" />
+            <item index="83" class="java.lang.String" itemvalue="blinker" />
+            <item index="84" class="java.lang.String" itemvalue="scipy" />
+            <item index="85" class="java.lang.String" itemvalue="tornado" />
+            <item index="86" class="java.lang.String" itemvalue="plainbox" />
+            <item index="87" class="java.lang.String" itemvalue="parso" />
+            <item index="88" class="java.lang.String" itemvalue="ipython" />
+            <item index="89" class="java.lang.String" itemvalue="Send2Trash" />
+            <item index="90" class="java.lang.String" itemvalue="prometheus-client" />
+            <item index="91" class="java.lang.String" itemvalue="pandas" />
+            <item index="92" class="java.lang.String" itemvalue="jupyter-console" />
+            <item index="93" class="java.lang.String" itemvalue="pytz" />
           </list>
         </value>
       </option>
