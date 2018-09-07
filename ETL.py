@@ -51,8 +51,7 @@ def get_table_struct():
 @etl.route('/transform', methods=['POST'])
 def transform():
     try:
-        #data = json.loads(request.get_data().decode('utf-8'))
-        data = request.get_json()
+        data = json.loads(request.get_data().decode('utf-8'))
         assert data is not None, 'must post json object!'
         print(data)
         assert 'source_table' in data, 'missing parameters source table name!'
@@ -95,7 +94,9 @@ def transform():
         res = {'length of data before transform': count[0],
                'length of data after transform': count[1]}
         resp = jsonify(res)
+        #resp = Response(res, mimetype='application/json')
         resp.headers['Access-Control-Allow-Origin'] = '*'
+
         return resp
     except Exception as e:
         print(e)

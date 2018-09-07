@@ -271,12 +271,12 @@ if __name__ == '__main__':
     # #data.drop(['index', 'id'])
     # #data.dropna(['id', 'num'])
     #
-    # data.df = pd.DataFrame({'hah':['109', '1-1'],
-    #                         'test':['123-456-789', '236-456-455'],
-    #                         '1':[908, 201],
-    #                         '2':[None, 755],
-    #                         '3':[574,7665]})
-    # data.save('test')
+    data.df = pd.DataFrame({'hah':['109', '1-1'],
+                            'test':['123-456-789', '236-456-455'],
+                            '1':[908, 201],
+                            '2':[None, 755],
+                            '3':[574,7665]})
+    data.save('test')
     # # print(data.df)
     # #
     # # data.filter([{'column':'test', 'cmp' : 'like', 'value':'-4'},
