@@ -150,8 +150,9 @@ class Data():
             if item.get('drop_source_columns', 0) == 1:
                 self.drop(item['source_columns'])
 
-    def rename(self, raname_args):
-        self.df.rename(columns=raname_args, inplace=True)
+    def rename(self, rename_args_list):
+        rename_args_dict = {item[0]:item[1] for item in rename_args_list}
+        self.df.rename(columns=rename_args_dict, inplace=True)
 
     def transform(self, target=None, target_engine=None, transform_args=None, save=False):
         s_l = self.__len__()
@@ -276,7 +277,9 @@ if __name__ == '__main__':
                             '1':[908, 201],
                             '2':[None, 755],
                             '3':[574,7665]})
-    data.save('test')
+    data.rename([["test", "test1"],["hah","test2"]])
+    print(data.df)
+    #data.save('test')
     # # print(data.df)
     # #
     # # data.filter([{'column':'test', 'cmp' : 'like', 'value':'-4'},
