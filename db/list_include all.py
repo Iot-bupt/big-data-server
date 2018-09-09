@@ -217,7 +217,7 @@ class DBTool():
             raise
 
     '''
-    根据所有字段实现查询(因为字段名与字段类型，是否是主键一一对应，故参数只取字段名即可)
+    根据所有字段实现查询
     '''
     def search(self,table_name,field_name):
         try:
