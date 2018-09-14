@@ -102,14 +102,20 @@ class DBTool():
             sql= ""
             if pri == 0:
                 sql = "ALTER TABLE "+sheet+"ADD "+column+" "+type+";"
+                self.cursor.execute(sql)
             else:
-                prisql = "select * from new_table where table_na ="+sheet+"and key_type = 1;"
-                if len(self.execute_query(prisql)) ==0:
-                    sql = "ALTER TABLE "+sheet+"ADD "+column+type+" PRIMARY KEY;"
+                prisql = "SELECT COUNT(*) PrimaryNum FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE t WHERE t.TABLE_NAME = '" + sheet + "'"
+                self.execute_query(prisql);
+                count = self.cursor.fetchall()[0]
+                if count ==0:
+                    sql = "ALTER TABLE "+sheet+" ADD "+column+" "+type+" PRIMARY KEY;"
+                    self.cursor.execute(sql)
                 else:
-                    sql = "ALTER TABLE"+sheet+" DROP PRIMARY KEY;ALTER TABLE "+sheet+"ADD "+column+type+" PRIMARY KEY;"
-            sql = sql +"INSERT INTO new_table (table_na,field_name,field_type,key_type) VALUE ("+sheet+","+column+","+type+","+pri+");"
-            self.cursor.execute(sql)
+                    sql = "ALTER TABLE "+sheet+" DROP PRIMARY KEY "
+                    self.cursor.execute(sql)
+                    sql = "ALTER TABLE "+sheet+" ADD "+column+" "+type+" PRIMARY KEY;"
+                    self.cursor.execute(sql)
+            # sql = sql +"INSERT INTO new_table (table_na,field_name,field_type,key_type) VALUE ("+sheet+","+column+","+type+","+pri+");"
         except pymysql.Error as e:
             print(e)
             raise
@@ -118,7 +124,8 @@ class DBTool():
     '''
     def deleteColumn(self,sheet,column):
         try:
-            sql = "ALTER TABLE "+sheet+ " DROP COLUMN "+column+" ; DELETE FROM new_table WHERE table_na= "+sheet+" and field_name = "+column;
+            # sql = "ALTER TABLE "+sheet+ " DROP COLUMN "+column+" ; DELETE FROM new_table WHERE table_na= "+sheet+" and field_name = "+column;
+            sql = "ALTER TABLE " + sheet + " DROP COLUMN " + column ;
             self.cursor.execute(sql)
         except pymysql.Error as e:
             print(e)
@@ -126,14 +133,27 @@ class DBTool():
     '''
     修改表字段名称
     '''
-
+    def alterColumnName(self,sheet,column,name):
+        try:
+            typesql = "SELECT COLUMN_TYPE,COLUMN_DEFAULT,COLUMN_COMMENT FROM INFORMATION_SCHEMA.COLUMNS  WHERE  TABLE_NAME = '"+sheet+"' and COLUMN_NAME = '" +column+"'"
+            self.execute_query(typesql)
+            info = self.cursor.fetchall()[0]
+            if info[1] == None :
+                sql = "alter  table "+sheet+" change "+column+ " "+name+" "+info[0]+" DEFAULT NULL COMMENT '"+info[2]+"'"
+            else:
+                sql = "alter  table "+sheet+" change "+column+ " "+name+" "+info[0]+" DEFAULT "+info[1]+" COMMENT '"+info[2]+"'"
+            self.cursor.execute(sql)
+        except pymysql.Error as e:
+            print(e)
+            raise
 
     '''
     修改表的字段属性
     '''
     def alterColumnType(self,sheet,column,type):
         try:
-            sql = "ALTER TABLE"+sheet +" MODIFY COLUMN" +column+" "+type+ ";UPDATE new_table SET field_type= "+type+" where table_na="+sheet+"and field_name ="+column+";"
+            # sql = "ALTER TABLE"+sheet +" MODIFY COLUMN" +column+" "+type+ ";UPDATE new_table SET field_type= "+type+" where table_na="+sheet+"and field_name ="+column+";"
+            sql = "ALTER TABLE " + sheet + " MODIFY COLUMN " + column + " " + type ;
             self.cursor.execute(sql)
         except pymysql.Error as e:
             print(e)
@@ -145,13 +165,18 @@ class DBTool():
     def addColumnPri(self,sheet,column):
         try:
             sql = ""
-            prisql = "select * from new_table where table_na =" + sheet + "and key_type = 1;"
-            if len(self.execute_query(prisql)) == 0:
-                sql = "ALTER TABLE " + sheet + "ADD " + column + type + " PRIMARY KEY;"
+            prisql = "SELECT COUNT(*) PrimaryNum FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE t WHERE t.TABLE_NAME = '" + sheet + "'"
+            self.execute_query(prisql);
+            count = self.cursor.fetchall()[0]
+            if count[0] == 0:
+                sql = "ALTER TABLE " + sheet + " ADD  PRIMARY KEY ("+ column + ")"
+                self.cursor.execute(sql)
             else:
-                sql = "ALTER TABLE" + sheet + " DROP PRIMARY KEY;ALTER TABLE " + sheet + "ADD " + column +" "+ type + " PRIMARY KEY;"
-            sql = sql + ";UPDATE new_table SET key_type= 1 where table_na="+sheet+"and field_name ="+column+";"
-            self.cursor.execute(sql)
+                sql = "ALTER TABLE " + sheet + "  DROP PRIMARY KEY"
+                self.cursor.execute(sql)
+                sql = "ALTER TABLE " + sheet + "ADD  PRIMARY KEY (" + column + ")"
+                self.cursor.execute(sql)
+            # sql = sql + ";UPDATE new_table SET key_type= 1 where table_na="+sheet+"and field_name ="+column+";"
         except pymysql.Error as e:
             print(e)
             raise
@@ -159,9 +184,15 @@ class DBTool():
     '''
     删除表的主键
     '''
-    def deleteColumnPri(self,sheet,column):
+    def deleteColumnPri(self,sheet):
         try:
-            print()
+            sql = ""
+            prisql = "SELECT COUNT(*) PrimaryNum FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE t WHERE t.TABLE_NAME = '" + sheet + "'"
+            self.execute_query(prisql);
+            count = self.cursor.fetchall()[0]
+            if count[0] == 1:
+                sql = "ALTER TABLE" + sheet + " DROP PRIMARY KEY;"
+                self.cursor.execute(sql)
         except pymysql.Error as e:
             print(e)
             raise
