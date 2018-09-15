@@ -31,7 +31,7 @@ def get_app():
             if item[4]:
                 tmp['app_output'] = json.loads(item[4])
             tmp['tenant_id'] = item[5]
-            tmp['stop_time'] = item[6].strftime('%Y-%m-%d %H:%M:%S')
+            tmp['stop'] = item[6]
             res['data'].append(tmp)
         print(res)
         db.close()
@@ -95,7 +95,7 @@ def start_app():
         print(data)
         assert 'appId' in data, 'missing parameters app id!'
         app_id = int(data['appId'])
-        timeout = int(data.get('timeout', 3600))
+        timeout = int(data.get('timeout', 60))
         db = mysql(**mysql_args)
         sql_select = "select model_path from data_model, app" \
                      + " where data_model.model_id = app.model_id" \
@@ -111,8 +111,7 @@ def start_app():
         app = job(app_id, model_path, app_input, kafka_servers, timeout)
         app.start()
         #app2job.setdefault(app_id, app)
-        sql_update = "update app set stop_time = '%s' where app_id = %d" \
-                     % (time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time()+timeout)), app_id)
+        sql_update = "update app set stop = 0 where app_id = %d" % (app_id)
         db.update(sql_update)
         db.close()
         resp = jsonify(str({'status': 'start app success!'}))

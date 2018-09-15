@@ -1,10 +1,12 @@
-import os
-import csv
-import json
-import time
+model_path = '/home/model/'
+kafka_servers = ['kafka-service:9092']
+mysql_args = {'host':'172.24.32.169', 'user':'root', 'passwd':'root','port':3306, 'dbname':'BUPT_IOT'}
+other_args = {'host':'172.24.32.169', 'user':'root', 'passwd':'root','port':3306, 'dbname':'BUPT_IOT'}
+cassandra_args = {'host':['39.104.165.155'], 'dbname':'bupt_iot'}
+
+import os, csv, json, time
 import pandas as pd
-import subprocess
-import pymysql
+import subprocess, pymysql
 from datetime import date
 from kafka import KafkaConsumer
 from flask import Blueprint, jsonify, request,Flask,Response
@@ -17,12 +19,6 @@ from util.job import job
 from util.error import get_error_resp
 from util.engine import *
 from util.session import get_cassandra_session
-
-model_path = '/home/model/'
-kafka_servers = ['kafka-service:9092']
-mysql_args = {'host':'172.24.32.169', 'user':'root', 'passwd':'root','port':3306, 'dbname':'BUPT_IOT'}
-other_args = {'host':'172.24.32.169', 'user':'root', 'passwd':'root','port':3306, 'dbname':'BUPT_IOT'}
-cassandra_args = {'host':['39.104.165.155'], 'dbname':'bupt_iot'}
 
 
 # if __name__ == '__main__':

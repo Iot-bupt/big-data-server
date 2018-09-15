@@ -3,8 +3,8 @@ import pandas as pd
 from sqlalchemy import create_engine
 
 class mysql():
-    def __init__(self, host='39.104.165.155', user='root', passwd='root', dbname='BUPT_IOT'):
-        self.db = pymysql.connect(host, user, passwd, dbname)
+    def __init__(self, host='39.104.165.155', user='root', passwd='root', dbname='BUPT_IOT', port=3306):
+        self.db = pymysql.connect(host, user, passwd, dbname, port)
         self.cursor = self.db.cursor()
         self.engine = create_engine('mysql+pymysql://'+user+':'+passwd+'@'+host+':3306/'+dbname)
 
