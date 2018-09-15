@@ -71,9 +71,9 @@ def create_app():
             app_input.append({"device_id":device_id, "type":data_type})
         app_id = int(time.time())
         app_input = json.dumps(app_input)
-        sql_insert = "insert into app(app_id, app_name, model_id, app_input, app_output, tenant_id)" \
-                     + " values(%d, '%s', %d, '%s', '%s', %d, '%s')" \
-                      % (app_id, app_name, model_id, app_input, app_output, tenant_id, '1970-01-11 00:00:00')
+        sql_insert = "insert into app(app_id, app_name, model_id, app_input, app_output, tenant_id, stop)" \
+                     + " values(%d, '%s', %d, '%s', '%s', %d, %d)" \
+                      % (app_id, app_name, model_id, app_input, app_output, tenant_id, 1)
         #print(sql_insert)
         db.insert(sql_insert)
         db.close()
@@ -115,6 +115,28 @@ def start_app():
         db.update(sql_update)
         db.close()
         resp = jsonify(str({'status': 'start app success!'}))
+        resp.headers['Access-Control-Allow-Origin'] = '*'
+        return resp
+    except Exception as e:
+        print(e)
+        return get_error_resp(e)
+
+@model_app.route('/stop-app', methods=['GET', 'POST'])
+def stop_app():
+    try:
+        data = {}
+        if request.method == 'GET':
+            data = request.args
+        elif request.method == 'POST':
+            data = request.form
+        print(data)
+        assert 'appId' in data, 'missing parameters app id!'
+        app_id = int(data['appId'])
+        db = mysql(**mysql_args)
+        sql_update = "update app set stop = 1 where app_id = %d" % (app_id)
+        db.update(sql_update)
+        db.close()
+        resp = jsonify(str({'status': 'stop app success!'}))
         resp.headers['Access-Control-Allow-Origin'] = '*'
         return resp
     except Exception as e:
