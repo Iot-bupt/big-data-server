@@ -68,21 +68,38 @@ def get_tenant_model():
 
 @model.route('/create-model', methods=['GET','POST'])
 def create_model():
-    assert request.method == 'POST', 'method must be post!'
-    model_id = ''
     try:
-        assert 'model_file' in request.files, 'no model file!'
-        model_file = request.files['model_file']
-        data = request.form
+        data = {}
+        if request.method == 'GET':
+            data = request.args
+        elif request.method == 'POST':
+            data = request.form
+        print(data)
         assert 'tenantId' in data, 'missing parameters tenant id!'
         tenant_id = data['tenantId']
-        if not os.path.isdir(model_path):
-
-            os.makedirs(model_path)
-        if not os.path.isdir(model_path+'/'+tenant_id):
-            os.makedirs(model_path+'/'+tenant_id)
-        model_file_name = model_path+'/'+tenant_id + '/' + model_id + '.pkl'
-        model_file.save(model_file_name)
+        model_id = int(time.time())
+        assert 'input' in data, 'missing parameters model input!'
+        model_input = data['input']
+        model_name = data.get('modelName', '')
+        model_desc = data.get('modelDesc', '')
+        model_state = 0
+        for item in json.loads(model_input):
+            assert isinstance(item, str), 'model inpit parameter format wrong!'
+        sql_insert = "insert into data_model(model_id, model_name, model_desc, model_input, model_state, tenant_id)" \
+                     + " values(%d, '%s', '%s', '%s', %d, %d)" \
+                      % (model_id, model_name, model_input, model, model_state, tenant_id)
+        db = mysql(**mysql_args)
+        db.insert(sql_insert)
+        db.close()
+        resp = jsonify(str({'status': 'create model success, next you need train model!'}))
+        resp.headers['Access-Control-Allow-Origin'] = '*'
+        return resp
+        # if not os.path.isdir(model_path):
+        #     os.makedirs(model_path)
+        # if not os.path.isdir(model_path+'/'+tenant_id):
+        #     os.makedirs(model_path+'/'+tenant_id)
+        # model_file_name = model_path+'/'+tenant_id + '/' + model_id + '.pkl'
+        # model_file.save(model_file_name)
     except Exception as e:
         print(e)
         return get_error_resp(e)
@@ -100,7 +117,7 @@ def delete_model():
         tenant_id = int(data['tenantId'])
         assert 'modelId' in data, 'missing parameters model id!'
         model_id = int(data['modelId'])
-        sql_delete = "select * from data_model where tenant_id = %d and model_id = %d" % (tenant_id, model_id)
+        sql_delete = "delete from data_model where tenant_id = %d and model_id = %d" % (tenant_id, model_id)
         db = mysql(**mysql_args)
         db.delete(sql_delete)
         db.close()
