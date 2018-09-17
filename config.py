@@ -12,6 +12,7 @@ from kafka import KafkaConsumer
 from flask import Blueprint, jsonify, request,Flask,Response
 from sklearn.linear_model import LinearRegression, LogisticRegression
 from sklearn.model_selection import train_test_split
+from sklearn.externals import joblib
 from flask_socketio import SocketIO
 from db.mysql import mysql
 from hdfs.file import file

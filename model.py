@@ -2,6 +2,28 @@ from config import *
 
 model = Blueprint('model', __name__)
 
+def get_data(engine, source_table, feature_columns, target_columns, test_size=0.0):
+    data = pd.read_sql(source_table, engine)
+    X_train, X_test, y_train, y_test = train_test_split(
+        data[feature_columns], data[target_columns], test_size=test_size)
+    return  X_train, X_test, y_train, y_test
+
+def train(data_model, x, y):
+    data_model.fit(x, y)
+
+
+def define_model(model_type):
+    if model_type == 'reg':
+        return LinearRegression()
+    if model_type == 'cla':
+        return LogisticRegression()
+    return None
+
+def save_model(data_model, model_file_name, model_file_path=model_path):
+    if not os.path.isdir(model_file_path):
+        os.makedirs(model_file_path)
+    joblib.dump(data_model, model_file_path + '/' + model_file_name + '.pkl')
+
 @model.route('/get-general-model', methods=['GET', 'POST'])
 def get_general_model():
     try:
@@ -84,7 +106,7 @@ def create_model():
         model_desc = data.get('modelDesc', '')
         model_state = 0
         for item in json.loads(model_input):
-            assert isinstance(item, str), 'model inpit parameter format wrong!'
+            assert isinstance(item, str), 'model input parameter format wrong!'
         sql_insert = "insert into data_model(model_id, model_name, model_desc, model_input, model_state, tenant_id)" \
                      + " values(%d, '%s', '%s', '%s', %d, %d)" \
                       % (model_id, model_name ,model_desc, model_input, model_state, tenant_id)
@@ -113,34 +135,57 @@ def train_model():
         elif request.method == 'POST':
             data = request.form
         print(data)
+
         assert 'modelId' in data, 'missing parameters model id!'
         model_id = int(data.get('modelId'))
+
+        db_con_args = mysql_args
+        if 'host' in data and 'user' in data and 'passwd' in data and 'dbname' in data:
+            db_con_args['host'] = data['host']
+            db_con_args['user'] = data['user']
+            db_con_args['passwd'] = data['passwd']
+            db_con_args['dbname'] = data['dbname']
+            db_con_args['port'] = int(data.get('port', 3306))
+        engine = get_mysql_engine(db_con_args)
+
         assert 'sourceTable' in data, 'missing parameters source table!'
         source_table = data['sourceTable']
+
         assert 'featureColumns' in data, 'missing parameters feature columns!'
         feature_columns = json.loads(data['featureColumns'])
+        for item in feature_columns:
+            assert isinstance(item, str), 'feature columns parameter format wrong!'
+
         assert 'targetColumns' in data, 'missing parameters target columns!'
         target_columns = json.loads(data['targetColumns'])
+        for item in target_columns:
+            assert isinstance(item, str), 'feature columns parameter format wrong!'
 
         sql_select = "select model_input from data_model where model_id = %d" % (model_id)
         db = mysql(**mysql_args)
         rows = list(db.select(sql_select))
         assert len(rows) >= 1, 'no match model!'
         model_input = json.loads(rows[0][0])
-        app_input = []
-        #print(model_input)
-        assert len(data_source) == len(model_input), 'data source do not match model input!'
-        for device_id, data_type in zip(data_source, model_input):
-            app_input.append({"device_id":device_id, "type":data_type})
-        app_id = int(time.time())
-        app_input = json.dumps(app_input)
-        sql_insert = "insert into app(app_id, app_name, model_id, app_input, app_output, tenant_id, stop)" \
-                     + " values(%d, '%s', %d, '%s', '%s', %d, %d)" \
-                      % (app_id, app_name, model_id, app_input, app_output, tenant_id, 1)
-        #print(sql_insert)
-        db.insert(sql_insert)
+        assert len(feature_columns) == len(model_input), 'feature columns do not match model input!'
+
+        assert  'modelType' in data, 'missing parameters model type!'
+        model_type = data['modelType']
+        assert model_type in ['reg', 'cla'], 'model type must 1. linear regression or 2. logistic regression for classify!'
+
+        data_model = define_model(model_type)
+        x, _, y, _ = get_data(engine, source_table, feature_columns, target_columns)
+        train(data_model, x, y)
+        model_file_name = str(model_id)
+        model_file_path = model_path
+        save_model(data_model, model_file_name=model_file_name, model_file_path=model_file_path)
+
+        sql_update = "update data_model set model_path = '%s' where model_id = %d" \
+                     % ( model_file_path + '/' + model_file_name + '.pkl', model_id)
+        db.update(sql_update)
+        sql_update = "update data_model set model_state = 1 where model_id = %d" % (model_id)
+        db.update(sql_update)
         db.close()
-        resp = jsonify(str({'status': 'create app success!'}))
+        resp = jsonify(str({'status': 'train model success!'}))
         resp.headers['Access-Control-Allow-Origin'] = '*'
         return resp
     except Exception as e:
