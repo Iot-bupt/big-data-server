@@ -11,7 +11,6 @@ def get_data(engine, source_table, feature_columns, target_columns, test_size=0.
 def train(data_model, x, y):
     data_model.fit(x, y)
 
-
 def define_model(model_type):
     if model_type == 'reg':
         return LinearRegression()
@@ -98,7 +97,7 @@ def create_model():
             data = request.form
         print(data)
         assert 'tenantId' in data, 'missing parameters tenant id!'
-        tenant_id = data['tenantId']
+        tenant_id = int(data['tenantId'])
         model_id = int(time.time())
         assert 'input' in data, 'missing parameters model input!'
         model_input = data['input']
@@ -113,7 +112,7 @@ def create_model():
         db = mysql(**mysql_args)
         db.insert(sql_insert)
         db.close()
-        resp = jsonify(str({'status': 'create model success, next you need train model!'}))
+        resp = jsonify({'status': 'create model success, next you need train model!'})
         resp.headers['Access-Control-Allow-Origin'] = '*'
         return resp
         # if not os.path.isdir(model_path):

@@ -51,13 +51,15 @@ def create_app():
         elif request.method == 'POST':
             data = request.form
         print(data)
-        tenant_id, model_id, data_source, app_name, app_output = None, None, None, '', ''
+        #tenant_id, model_id, data_source, app_name, app_output = None, None, None, '', ''
         assert 'tenantId' in data, 'missing parameters tenant id!'
         tenant_id = int(data.get('tenantId'))
         assert 'modelId' in data,  'missing parameters model id!'
         model_id = int(data.get('modelId'))
         assert 'dataSource' in data,  'missing parameters data source!'
         data_source = json.loads(data.get('dataSource'))
+        app_name= data.get('appName', '')
+        app_output = data.get('appOutput', '')
         #print(tenant_id, model_id, data_source)
         sql_select = "select model_input from data_model where model_id = %d" % (model_id)
         db = mysql(**mysql_args)
@@ -183,7 +185,7 @@ def real_predict():
                                  group_id='app_'+app_id+'_real_predict_'+str(time.time()))
         msg_value = list(consumer.poll(timeout_ms=5000, max_records=1).values())[0][0]\
             .value.decode('utf-8').replace('\'', '\"')
-        resp = jsonify({'data': msg_value})
+        resp = jsonify({'data': json.loads(msg_value)})
         resp.headers['Access-Control-Allow-Origin'] = '*'
         return resp
     except Exception as e:
