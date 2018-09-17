@@ -87,7 +87,7 @@ def create_model():
             assert isinstance(item, str), 'model inpit parameter format wrong!'
         sql_insert = "insert into data_model(model_id, model_name, model_desc, model_input, model_state, tenant_id)" \
                      + " values(%d, '%s', '%s', '%s', %d, %d)" \
-                      % (model_id, model_name, model_input, model, model_state, tenant_id)
+                      % (model_id, model_name ,model_desc, model_input, model_state, tenant_id)
         db = mysql(**mysql_args)
         db.insert(sql_insert)
         db.close()
@@ -100,6 +100,49 @@ def create_model():
         #     os.makedirs(model_path+'/'+tenant_id)
         # model_file_name = model_path+'/'+tenant_id + '/' + model_id + '.pkl'
         # model_file.save(model_file_name)
+    except Exception as e:
+        print(e)
+        return get_error_resp(e)
+
+@model.route('/train-model', methods=['GET', 'POST'])
+def train_model():
+    try:
+        data = {}
+        if request.method == 'GET':
+            data = request.args
+        elif request.method == 'POST':
+            data = request.form
+        print(data)
+        assert 'modelId' in data, 'missing parameters model id!'
+        model_id = int(data.get('modelId'))
+        assert 'sourceTable' in data, 'missing parameters source table!'
+        source_table = data['sourceTable']
+        assert 'featureColumns' in data, 'missing parameters feature columns!'
+        feature_columns = json.loads(data['featureColumns'])
+        assert 'targetColumns' in data, 'missing parameters target columns!'
+        target_columns = json.loads(data['targetColumns'])
+
+        sql_select = "select model_input from data_model where model_id = %d" % (model_id)
+        db = mysql(**mysql_args)
+        rows = list(db.select(sql_select))
+        assert len(rows) >= 1, 'no match model!'
+        model_input = json.loads(rows[0][0])
+        app_input = []
+        #print(model_input)
+        assert len(data_source) == len(model_input), 'data source do not match model input!'
+        for device_id, data_type in zip(data_source, model_input):
+            app_input.append({"device_id":device_id, "type":data_type})
+        app_id = int(time.time())
+        app_input = json.dumps(app_input)
+        sql_insert = "insert into app(app_id, app_name, model_id, app_input, app_output, tenant_id, stop)" \
+                     + " values(%d, '%s', %d, '%s', '%s', %d, %d)" \
+                      % (app_id, app_name, model_id, app_input, app_output, tenant_id, 1)
+        #print(sql_insert)
+        db.insert(sql_insert)
+        db.close()
+        resp = jsonify(str({'status': 'create app success!'}))
+        resp.headers['Access-Control-Allow-Origin'] = '*'
+        return resp
     except Exception as e:
         print(e)
         return get_error_resp(e)
