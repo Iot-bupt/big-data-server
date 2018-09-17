@@ -35,7 +35,7 @@ def get_app():
             res['data'].append(tmp)
         print(res)
         db.close()
-        resp = jsonify(str(res))
+        resp = jsonify(res)
         resp.headers['Access-Control-Allow-Origin'] = '*'
         return resp
     except Exception as e:
@@ -77,7 +77,7 @@ def create_app():
         #print(sql_insert)
         db.insert(sql_insert)
         db.close()
-        resp = jsonify(str({'status': 'create app success!'}))
+        resp = jsonify({'status': 'create app success!'})
         resp.headers['Access-Control-Allow-Origin'] = '*'
         return resp
     except Exception as e:
@@ -114,7 +114,7 @@ def start_app():
         sql_update = "update app set stop = 0 where app_id = %d" % (app_id)
         db.update(sql_update)
         db.close()
-        resp = jsonify(str({'status': 'start app success!'}))
+        resp = jsonify({'status': 'start app success!'})
         resp.headers['Access-Control-Allow-Origin'] = '*'
         return resp
     except Exception as e:
@@ -136,7 +136,7 @@ def stop_app():
         sql_update = "update app set stop = 1 where app_id = %d" % (app_id)
         db.update(sql_update)
         db.close()
-        resp = jsonify(str({'status': 'stop app success!'}))
+        resp = jsonify({'status': 'stop app success!'})
         resp.headers['Access-Control-Allow-Origin'] = '*'
         return resp
     except Exception as e:
@@ -160,7 +160,7 @@ def delete_app():
         sql_delete = "delete from app where tenant_id = %d and app_id = %d" % (tenant_id, app_id)
         db.delete(sql_delete)
         db.close()
-        resp = jsonify(str({'status': 'delete app success!'}))
+        resp = jsonify({'status': 'delete app success!'})
         resp.headers['Access-Control-Allow-Origin'] = '*'
         return resp
     except Exception as e:
@@ -183,7 +183,7 @@ def real_predict():
                                  group_id='app_'+app_id+'_real_predict_'+str(time.time()))
         msg_value = list(consumer.poll(timeout_ms=5000, max_records=1).values())[0][0]\
             .value.decode('utf-8').replace('\'', '\"')
-        resp = jsonify(str({'data': msg_value}))
+        resp = jsonify({'data': msg_value})
         resp.headers['Access-Control-Allow-Origin'] = '*'
         return resp
     except Exception as e:

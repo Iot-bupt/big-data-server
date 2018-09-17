@@ -1,6 +1,6 @@
 from flask import jsonify
 
-def get_error_resp(e, trans2str=True):
+def get_error_resp(e, trans2str=False):
     if trans2str:
         resp = jsonify(str({'status': e.args[0]}))
     else:

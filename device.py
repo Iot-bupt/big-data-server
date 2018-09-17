@@ -20,7 +20,7 @@ def get_device_types():
         for item in db.select(sql_select):
             res['deviceTypes'].append(item[0])
         db.close()
-        resp = jsonify(str(res))
+        resp = jsonify(res)
         resp.headers['Access-Control-Allow-Origin'] = '*'
         return resp
     except Exception as e:

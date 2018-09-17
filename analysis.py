@@ -26,7 +26,7 @@ def get_resp(args, time_out = 90 * 1000, tenant_id = '-1', topic_type = 'data'):
         raise Exception('Time Out')
     print(msg)
     print(msg.value.decode('utf-8').replace('"', '\''))
-    resp = jsonify(msg.value.decode('utf-8').replace('"', '\''))
+    resp = jsonify(json.loads(msg.value.decode('utf-8')))#.replace('"', '\''))
     resp.headers['Access-Control-Allow-Origin'] = '*'
     return resp
 
@@ -101,7 +101,7 @@ def recent_device_analysis():
             usual_data_count = res.setdefault('usualDataCount', {}); usual_data_count[item[0]] = item[2]
             usual_data_rate = res.setdefault('usualDataRate', {}); usual_data_rate[item[0]] = float(item[4])
         db.close()
-        resp = jsonify(str(res))
+        resp = jsonify(res)
         resp.headers['Access-Control-Allow-Origin'] = '*'
         return resp
     except Exception as e:
@@ -137,7 +137,7 @@ def recent_data_analysis():
             data_count = res.setdefault('dataCount', {}); time_data_count = data_count.setdefault(str(item[6]), {}); time_data_count[item[0]] = item[5]
         print(res)
         db.close()
-        resp = jsonify(str(res))
+        resp = jsonify(res)
         resp.headers['Access-Control-Allow-Origin'] = '*'
         return resp
     except Exception as e:

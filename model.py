@@ -48,7 +48,7 @@ def get_general_model():
             res['data'].append(tmp)
         print(res)
         db.close()
-        resp = jsonify(str(res))
+        resp = jsonify(res)
         resp.headers['Access-Control-Allow-Origin'] = '*'
         return resp
     except Exception as e:
@@ -81,7 +81,7 @@ def get_tenant_model():
             res['data'].append(tmp)
         print(res)
         db.close()
-        resp = jsonify(str(res))
+        resp = jsonify(res)
         resp.headers['Access-Control-Allow-Origin'] = '*'
         return resp
     except Exception as e:
@@ -185,7 +185,7 @@ def train_model():
         sql_update = "update data_model set model_state = 1 where model_id = %d" % (model_id)
         db.update(sql_update)
         db.close()
-        resp = jsonify(str({'status': 'train model success!'}))
+        resp = jsonify({'status': 'train model success!'})
         resp.headers['Access-Control-Allow-Origin'] = '*'
         return resp
     except Exception as e:
@@ -209,7 +209,7 @@ def delete_model():
         db = mysql(**mysql_args)
         db.delete(sql_delete)
         db.close()
-        resp = jsonify(str({'status': 'delete model success!'}))
+        resp = jsonify({'status': 'delete model success!'})
         resp.headers['Access-Control-Allow-Origin'] = '*'
         return resp
     except Exception as e:
