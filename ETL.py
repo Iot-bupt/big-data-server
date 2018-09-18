@@ -147,8 +147,7 @@ def upload_csv_file():
         #engine = get_mysql_engine(mysql_args)
         length = len(df.index)
         df.to_sql(name=target, con=engine,if_exists='append', index=False)
-        res = {'status':True,
-               'database table name': target,
+        res = {'database table name': target,
                'length of data  insert into database': length}
         resp = jsonify(res)
         resp.headers['Access-Control-Allow-Origin'] = '*'
