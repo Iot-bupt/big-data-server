@@ -101,8 +101,8 @@ def create_model():
         model_id = int(time.time())
         assert 'input' in data, 'missing parameters model input!'
         model_input = data['input']
-        model_name = data.get('modelName', '')
-        model_desc = data.get('modelDesc', '')
+        model_name = data.get('modelName', str(model_id))
+        model_desc = data.get('modelDesc', str(model_id))
         model_state = 0
         for item in json.loads(model_input):
             assert isinstance(item, str), 'model input parameter format wrong!'
@@ -112,7 +112,7 @@ def create_model():
         db = mysql(**mysql_args)
         db.insert(sql_insert)
         db.close()
-        resp = jsonify({'status': 'create model success, next you need train model!'})
+        resp = jsonify({'model id': model_id, 'status': 'create model success, next you need train model!'})
         resp.headers['Access-Control-Allow-Origin'] = '*'
         return resp
         # if not os.path.isdir(model_path):
@@ -184,7 +184,7 @@ def train_model():
         sql_update = "update data_model set model_state = 1 where model_id = %d" % (model_id)
         db.update(sql_update)
         db.close()
-        resp = jsonify({'status': 'train model success!'})
+        resp = jsonify({'model id':model_id, 'status': 'train model success!'})
         resp.headers['Access-Control-Allow-Origin'] = '*'
         return resp
     except Exception as e:
@@ -208,7 +208,7 @@ def delete_model():
         db = mysql(**mysql_args)
         db.delete(sql_delete)
         db.close()
-        resp = jsonify({'status': 'delete model success!'})
+        resp = jsonify({'model id':model_id, 'status': 'delete model success!'})
         resp.headers['Access-Control-Allow-Origin'] = '*'
         return resp
     except Exception as e:
