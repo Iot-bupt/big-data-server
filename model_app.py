@@ -58,8 +58,6 @@ def create_app():
         model_id = int(data.get('modelId'))
         assert 'dataSource' in data,  'missing parameters data source!'
         data_source = json.loads(data.get('dataSource'))
-        app_name= data.get('appName', '')
-        app_output = data.get('appOutput', '')
         #print(tenant_id, model_id, data_source)
         sql_select = "select model_input from data_model where model_id = %d" % (model_id)
         db = mysql(**mysql_args)
@@ -72,6 +70,8 @@ def create_app():
         for device_id, data_type in zip(data_source, model_input):
             app_input.append({"device_id":device_id, "type":data_type})
         app_id = int(time.time())
+        app_name = data.get('appName', str(app_id))
+        app_output = data.get('appOutput', '')
         app_input = json.dumps(app_input)
         sql_insert = "insert into app(app_id, app_name, model_id, app_input, app_output, tenant_id, stop)" \
                      + " values(%d, '%s', %d, '%s', '%s', %d, %d)" \
@@ -79,7 +79,7 @@ def create_app():
         #print(sql_insert)
         db.insert(sql_insert)
         db.close()
-        resp = jsonify({'status': 'create app success!'})
+        resp = jsonify({'app id': app_id, 'status': 'create app success!'})
         resp.headers['Access-Control-Allow-Origin'] = '*'
         return resp
     except Exception as e:
@@ -116,7 +116,7 @@ def start_app():
         sql_update = "update app set stop = 0 where app_id = %d" % (app_id)
         db.update(sql_update)
         db.close()
-        resp = jsonify({'status': 'start app success!'})
+        resp = jsonify({'app id': app_id, 'status': 'start app success!'})
         resp.headers['Access-Control-Allow-Origin'] = '*'
         return resp
     except Exception as e:
@@ -138,7 +138,7 @@ def stop_app():
         sql_update = "update app set stop = 1 where app_id = %d" % (app_id)
         db.update(sql_update)
         db.close()
-        resp = jsonify({'status': 'stop app success!'})
+        resp = jsonify({'app id': app_id, 'status': 'stop app success!'})
         resp.headers['Access-Control-Allow-Origin'] = '*'
         return resp
     except Exception as e:
@@ -154,15 +154,16 @@ def delete_app():
         elif request.method == 'POST':
             data = request.form
         print(data)
-        assert 'tenantId' in data, 'missing parameters tenant id!'
-        tenant_id = int(data['tenantId'])
+        # assert 'tenantId' in data, 'missing parameters tenant id!'
+        # tenant_id = int(data['tenantId'])
         assert 'appId' in data, 'missing parameters app id!'
         app_id = int(data['appId'])
         db = mysql(**mysql_args)
-        sql_delete = "delete from app where tenant_id = %d and app_id = %d" % (tenant_id, app_id)
+        #sql_delete = "delete from app where tenant_id = %d and app_id = %d" % (tenant_id, app_id)
+        sql_delete = "delete from app where and app_id = %d" % (app_id)
         db.delete(sql_delete)
         db.close()
-        resp = jsonify({'status': 'delete app success!'})
+        resp = jsonify({'app id':app_id, 'status': 'delete app success!'})
         resp.headers['Access-Control-Allow-Origin'] = '*'
         return resp
     except Exception as e:
@@ -185,7 +186,7 @@ def real_predict():
                                  group_id='app_'+app_id+'_real_predict_'+str(time.time()))
         msg_value = list(consumer.poll(timeout_ms=5000, max_records=1).values())[0][0]\
             .value.decode('utf-8').replace('\'', '\"')
-        resp = jsonify({'data': json.loads(msg_value)})
+        resp = jsonify({'app id': int(app_id), 'predict': json.loads(msg_value)})
         resp.headers['Access-Control-Allow-Origin'] = '*'
         return resp
     except Exception as e:
