@@ -1,4 +1,3 @@
-import os
 from cassandra.cluster import Cluster
 
 class NoSQLTool():
