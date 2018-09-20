@@ -1,5 +1,7 @@
 import os
 import pymysql
+
+from cassandra.cluster import Cluster
 from sqlalchemy import create_engine
 
 #将数据库表的结构提取出放入新表，新表包含四个字段，即表名，字段名，字段类型，是否是主键
@@ -14,6 +16,8 @@ class DBTool():
                                     conn_dict['password'],
                                     conn_dict['dbname'])
         self.cursor = self.conn.cursor()
+        self.cluster = Cluster(contact_points=['39.104.165.155'])
+        self.session = self.cluster.connect('bupt_iot')
 
     #SQL语句执行方法
     def execute_query(self, sql_string):
@@ -96,37 +100,47 @@ class DBTool():
     type 字段类型
     column 字段名 
     sheet 表名
+    databaseType 数据库类型
     '''
-    def addColumn(self,sheet,column,type,pri):
+    def addColumn(self,sheet,column,type,pri,databaseType):
         try:
-            sql= ""
-            if pri == 0:
-                sql = "ALTER TABLE "+sheet+"ADD "+column+" "+type+";"
-                self.cursor.execute(sql)
-            else:
-                prisql = "SELECT COUNT(*) PrimaryNum FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE t WHERE t.TABLE_NAME = '" + sheet + "'"
-                self.execute_query(prisql);
-                count = self.cursor.fetchall()[0]
-                if count ==0:
-                    sql = "ALTER TABLE "+sheet+" ADD "+column+" "+type+" PRIMARY KEY;"
+            if databaseType == 0:
+                sql = ""
+                if pri == 0:
+                    sql = "ALTER TABLE " + sheet + "ADD " + column + " " + type + ";"
                     self.cursor.execute(sql)
                 else:
-                    sql = "ALTER TABLE "+sheet+" DROP PRIMARY KEY "
-                    self.cursor.execute(sql)
-                    sql = "ALTER TABLE "+sheet+" ADD "+column+" "+type+" PRIMARY KEY;"
-                    self.cursor.execute(sql)
-            # sql = sql +"INSERT INTO new_table (table_na,field_name,field_type,key_type) VALUE ("+sheet+","+column+","+type+","+pri+");"
+                    prisql = "SELECT COUNT(*) PrimaryNum FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE t WHERE t.TABLE_NAME = '" + sheet + "'"
+                    self.execute_query(prisql);
+                    count = self.cursor.fetchall()[0]
+                    if count == 0:
+                        sql = "ALTER TABLE " + sheet + " ADD " + column + " " + type + " PRIMARY KEY;"
+                        self.cursor.execute(sql)
+                    else:
+                        sql = "ALTER TABLE " + sheet + " DROP PRIMARY KEY "
+                        self.cursor.execute(sql)
+                        sql = "ALTER TABLE " + sheet + " ADD " + column + " " + type + " PRIMARY KEY;"
+                        self.cursor.execute(sql)
+                # sql = sql +"INSERT INTO new_table (table_na,field_name,field_type,key_type) VALUE ("+sheet+","+column+","+type+","+pri+");"
+            else:
+                sql = " ALTER TABLE "+sheet+" ADD "+column+" "+type
+                self.session.execute(sql)
         except pymysql.Error as e:
             print(e)
             raise
     '''
     删除表字段
     '''
-    def deleteColumn(self,sheet,column):
+    def deleteColumn(self,sheet,column,databaseType):
         try:
-            # sql = "ALTER TABLE "+sheet+ " DROP COLUMN "+column+" ; DELETE FROM new_table WHERE table_na= "+sheet+" and field_name = "+column;
-            sql = "ALTER TABLE " + sheet + " DROP COLUMN " + column ;
-            self.cursor.execute(sql)
+            if databaseType ==0:
+                # sql = "ALTER TABLE "+sheet+ " DROP COLUMN "+column+" ; DELETE FROM new_table WHERE table_na= "+sheet+" and field_name = "+column;
+                sql = "ALTER TABLE " + sheet + " DROP COLUMN " + column;
+                self.cursor.execute(sql)
+            else:
+                sql = " ALTER TABLE "+sheet+"  DROP "+column
+                self.session.execute(sql)
+
         except pymysql.Error as e:
             print(e)
             raise
