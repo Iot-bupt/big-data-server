@@ -86,20 +86,22 @@ def recent_device_analysis():
         print(data)
         assert 'tenantId' in data, 'missing parameters tenant id!'
         tenant_id = int(data['tenantId'])
-        assert 'flag' in data, 'missing parameters flag'
-        flag = data['flag']
+        assert 'days' in data, 'missing parameters flag'
+        days = int(data['days'])
         db = mysql(**mysql_args)
-        sql_select = "select device_type, device_count, data_count, usual_data_count, usual_data_rate" \
-                     + " from recent_device where tenant_id = %d and flag = '%s'" % (tenant_id, flag) \
+        sql_select = "select device_type, max(device_count), sum(data_count), sum(usual_data_count)" \
+                     + " from recent_device where tenant_id = %d" % (tenant_id) \
                      + " and date in" \
-                     + " (select max(date) from recent_device where tenant_id = %d and flag = '%s')" \
-                       % (tenant_id, flag)
+                     + " (select * from (select distinct(date) from recent_data where tenant_id = %d " % (tenant_id) \
+                     + " order by date desc limit %d) as tmp)" % (days) \
+                     + " group by device_type"
+        print(sql_select)
         res = {}
         for item in db.select(sql_select):
             device_count = res.setdefault('deviceCount', {}); device_count[item[0]] = item[1]
             data_count = res.setdefault('dataCount', {}); data_count[item[0]] = item[2]
-            usual_data_count = res.setdefault('usualDataCount', {}); usual_data_count[item[0]] = item[2]
-            usual_data_rate = res.setdefault('usualDataRate', {}); usual_data_rate[item[0]] = float(item[4])
+            usual_data_count = res.setdefault('usualDataCount', {}); usual_data_count[item[0]] = item[3]
+            usual_data_rate = res.setdefault('usualDataRate', {}); usual_data_rate[item[0]] = item[3] / item[2]
         db.close()
         resp = jsonify(res)
         resp.headers['Access-Control-Allow-Origin'] = '*'
