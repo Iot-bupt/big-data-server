@@ -41,7 +41,10 @@ def get_tables():
 def get_columns():
     try:
         db = NoSQLTool()
-        return db.get_columns()
+        res = list(db.get_columns())
+        resp = jsonify(res)
+        resp.headers['Access-Control-Allow-Origin'] = '*'
+        return resp
     except Exception as e:
         print(e)
         return get_error_resp(e)
