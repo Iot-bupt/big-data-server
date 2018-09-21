@@ -1,4 +1,5 @@
 from config import *
+from db.getNosqlInfo import NoSQLTool
 
 sql = Blueprint('sql', __name__)
 
@@ -32,6 +33,15 @@ def get_tables():
         resp = jsonify(res)
         resp.headers['Access-Control-Allow-Origin'] = '*'
         return resp
+    except Exception as e:
+        print(e)
+        return get_error_resp(e)
+
+@sql.route('/getTables', methods=['GET'])
+def get_columns():
+    try:
+        db = NoSQLTool()
+        return db.get_columns()
     except Exception as e:
         print(e)
         return get_error_resp(e)
