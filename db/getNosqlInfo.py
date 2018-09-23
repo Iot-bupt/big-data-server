@@ -16,8 +16,10 @@ class NoSQLTool():
                 query = "select * from system_schema.columns where keyspace_name = 'bupt_iot' and  table_name = '%s'"%(row)
                 rs = self.session.execute(query)
                 #print(rs)
-                for rs in rs:
-                    print(rs)
+                for rep in rs:
+                    print(rep)
+                yield rep
+
         except Exception as e:
             print(e)
 
