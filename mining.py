@@ -14,7 +14,7 @@ def define_model(n_clusters):
     return KMeans(n_clusters)
 
 @mining.route('/k-means', methods=['GET', 'POST'])
-def train_model():
+def fit_model():
     try:
         data = {}
         if request.method == 'GET':
