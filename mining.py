@@ -48,6 +48,8 @@ def train_model():
         data_model.fit(x)
 
         res = {}
+        x['labels'] = data_model.labels_
+        x.to_sql(source_table + '_with_label', engine, if_exists='append', index=False)
         res['labels'] = data_model.labels_.tolist()
         res['cluster_centers'] = data_model.cluster_centers_.tolist()
         resp = jsonify(res)
