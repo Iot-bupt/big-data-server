@@ -200,11 +200,12 @@ def delete_model():
         elif request.method == 'POST':
             data = request.form
         print(data)
-        assert 'tenantId' in data, 'missing parameters tenant id!'
-        tenant_id = int(data['tenantId'])
+        # assert 'tenantId' in data, 'missing parameters tenant id!'
+        # tenant_id = int(data['tenantId'])
         assert 'modelId' in data, 'missing parameters model id!'
         model_id = int(data['modelId'])
-        sql_delete = "delete from data_model where tenant_id = %d and model_id = %d" % (tenant_id, model_id)
+        #sql_delete = "delete from data_model where tenant_id = %d and model_id = %d" % (tenant_id, model_id)
+        sql_delete = "delete from data_model where model_id = %d" % (model_id)
         db = mysql(**mysql_args)
         db.delete(sql_delete)
         db.close()

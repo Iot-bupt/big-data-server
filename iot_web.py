@@ -7,6 +7,7 @@ from device import device
 from SQL import sql
 from HDFS import hdfs
 from ETL import etl
+from mining import mining
 
 app = Flask(__name__)
 
@@ -17,6 +18,7 @@ app.register_blueprint(device, url_prefix='/api/device')
 app.register_blueprint(sql, url_prefix='/api/sql')
 app.register_blueprint(hdfs, url_prefix='/api/hdfs')
 app.register_blueprint(etl, url_prefix='/api/etl')
+app.register_blueprint(mining, url_prefix='/api/mining')
 
 if __name__ == '__main__':
     app.run(port=8092, host='0.0.0.0',debug=True)
