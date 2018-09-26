@@ -19,6 +19,7 @@ class job(threading.Thread):
         self.app_id = app_id
         self.app_input = {}
         self.timeout = timeout
+        self.checkout = int(time.time()) % self.timeout
         #self.kafka_servers = kafka_servers
         self.model = joblib.load(model_path)
         self.consumer = KafkaConsumer('deviceData',
@@ -37,7 +38,9 @@ class job(threading.Thread):
     def run(self):
         data = [0.] * len(self.app_input)
         while self.__running.isSet():
-            if int(time.time()) % self.timeout == 0:
+            checkout_tmp = int(time.time()) % self.timeout
+            if checkout_tmp != self.checkout:
+                self.checkout = checkout_tmp
                 db = mysql(**self.mysql_args)
                 sql_select = "select * from app where app_id = %d and stop > 0" % (self.app_id)
                 if len(list(db.select(sql_select))) > 0:
