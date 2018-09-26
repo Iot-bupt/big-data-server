@@ -25,7 +25,7 @@ def main(cmd1, cmd2):
     # enter四个参数分别为：间隔事件、优先级（用于同时间到达的两个事件同时执行时定序）、被调用触发的函数，  
     # 给该触发函数的参数（tuple形式)
     now_time = int(time.time())
-    schedule.enter(print((now_time // (3600 * 24) + 1) * (3600 * 24) - now_time), 0, execute_command, (cmd1, cmd2 ))
+    schedule.enter((now_time // (3600 * 24) + 1) * (3600 * 24) - now_time, 0, execute_command, (cmd1, cmd2 ))
     schedule.run()
 
 if __name__ == '__main__':
