@@ -181,6 +181,13 @@ def real_predict():
         print(data)
         assert 'appId' in data, 'missing parameters app id!'
         app_id = data['appId']
+        db = mysql(**mysql_args)
+        sql_select = "select * from app where app_id = %s and stop > 0" % (app_id)
+        if len(list(db.select(sql_select))) > 0:
+            db.close()
+            resp = jsonify({'app id': int(app_id), 'status': 'stoped!'})
+            resp.headers['Access-Control-Allow-Origin'] = '*'
+            return resp
         consumer = KafkaConsumer(app_id,
                                  bootstrap_servers=kafka_servers,
                                  group_id='app_'+app_id+'_real_predict_'+str(time.time()))
