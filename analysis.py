@@ -124,7 +124,7 @@ def recent_data_analysis():
         assert 'days' in data, 'missing parameters days!'
         days = int(data['days'])
         db = mysql(**mysql_args)
-        sql_select = "select device_type, max_value, min_value, mean_value, stddev_value, data_count, date" \
+        sql_select = "select device_type, max_value, min_value, mean_value, stddev_value, data_count, usual_data_count, usual_data_rate, date" \
                      + " from recent_data where tenant_id = %d" % (tenant_id) \
                      + " and date in" \
                      + " (select * from (select distinct(date) from recent_data where tenant_id = %d " % (tenant_id) \
@@ -132,11 +132,13 @@ def recent_data_analysis():
         print(sql_select)
         res = {}
         for item in db.select(sql_select):
-            max_value = res.setdefault('maxValue', {}); time_max_value = max_value.setdefault(str(item[6]), {}); time_max_value[item[0]] = float(item[1])
-            min_value = res.setdefault('minValue', {}); time_min_value = min_value.setdefault(str(item[6]), {}); time_min_value[item[0]] = float(item[2])
-            mean_value = res.setdefault('meanValue', {});  time_mean_value = mean_value.setdefault(str(item[6]), {}); time_mean_value[item[0]] = float(item[3])
-            stddev_value = res.setdefault('stddevValue', {}); time_stddev_value = stddev_value.setdefault(str(item[6]), {}); time_stddev_value[item[0]] = float(item[4])
-            data_count = res.setdefault('dataCount', {}); time_data_count = data_count.setdefault(str(item[6]), {}); time_data_count[item[0]] = item[5]
+            max_value = res.setdefault('maxValue', {}); time_max_value = max_value.setdefault(str(item[8]), {}); time_max_value[item[0]] = float(item[1])
+            min_value = res.setdefault('minValue', {}); time_min_value = min_value.setdefault(str(item[8]), {}); time_min_value[item[0]] = float(item[2])
+            mean_value = res.setdefault('meanValue', {});  time_mean_value = mean_value.setdefault(str(item[8]), {}); time_mean_value[item[0]] = float(item[3])
+            stddev_value = res.setdefault('stddevValue', {}); time_stddev_value = stddev_value.setdefault(str(item[8]), {}); time_stddev_value[item[0]] = float(item[4])
+            data_count = res.setdefault('dataCount', {}); time_data_count = data_count.setdefault(str(item[8]), {}); time_data_count[item[0]] = item[5]
+            usual_data_count = res.setdefault('usualDataCount', {});time_usual_data_count = usual_data_count.setdefault(str(item[8]), {});time_usual_data_count[item[0]] = item[6]
+            usual_data_rate = res.setdefault('usualDataRate', {});time_usual_data_rate = usual_data_rate.setdefault(str(item[8]), {});time_usual_data_rate[item[0]] = item[7]
         print(res)
         db.close()
         resp = jsonify(res)
