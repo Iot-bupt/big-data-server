@@ -13,12 +13,13 @@ cmd_str2 = "spark-submit --class edu.bupt.iot.spark.common.RecentDevice /home/sp
 schedule = sched.scheduler(time.time, time.sleep)
 
 def get_wait_time(now_time):
-    return (now_time // (3600 * 24) + 1) * (3600 * 24) - (3600 * 8) - now_time
+    return ((now_time // (3600 * 24) + 1) * (3600 * 24) - (3600 * 8) - now_time)  % (3600 * 24)
 
 # 被周期性调度触发的函数
 def execute_command(cmd1, cmd2):
     os.system(cmd1)
     os.system(cmd2)
+    time.sleep(60)
     now_time = int(time.time())
     #print((now_time // (3600 * 24) + 1) * (3600 * 24) - now_time)
     schedule.enter(get_wait_time(now_time), 0, execute_command, (cmd1, cmd2))
