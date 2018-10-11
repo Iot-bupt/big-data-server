@@ -28,8 +28,9 @@ def get_app():
             tmp['app_input'],  tmp['app_output'] = [], []
             if item[3]:
                 tmp['app_input'] = json.loads(item[3])
-            if item[4]:
-                tmp['app_output'] = json.loads(item[4])
+            # if item[4]:
+            #     tmp['app_output'] = json.loads(item[4])
+            tmp['app_output'] = item[4]
             tmp['tenant_id'] = item[5]
             tmp['stop'] = item[6]
             res['data'].append(tmp)
@@ -160,7 +161,7 @@ def delete_app():
         app_id = int(data['appId'])
         db = mysql(**mysql_args)
         #sql_delete = "delete from app where tenant_id = %d and app_id = %d" % (tenant_id, app_id)
-        sql_delete = "delete from app where and app_id = %d" % (app_id)
+        sql_delete = "delete from app where app_id = %d" % (app_id)
         db.delete(sql_delete)
         db.close()
         resp = jsonify({'app id':app_id, 'status': 'delete app success!'})

@@ -1,5 +1,5 @@
 import time
-import os
+import os, sys
 import sched
 
 cmd_str1 = "spark-submit --class edu.bupt.iot.spark.common.RecentData /home/spark/iot.jar"
@@ -21,7 +21,7 @@ def execute_command(cmd1, cmd2):
     os.system(cmd2)
     time.sleep(60)
     now_time = int(time.time())
-    #print((now_time // (3600 * 24) + 1) * (3600 * 24) - now_time)
+    sys.stderr.write(str(get_wait_time(now_time)) + '\n')
     schedule.enter(get_wait_time(now_time), 0, execute_command, (cmd1, cmd2))
     #schedule.enter(2, 0, execute_command, (cmd1, cmd2))
 
@@ -29,6 +29,7 @@ def main(cmd1, cmd2):
     # enter四个参数分别为：间隔事件、优先级（用于同时间到达的两个事件同时执行时定序）、被调用触发的函数，
     # 给该触发函数的参数（tuple形式)
     now_time = int(time.time())
+    sys.stderr.write(str(get_wait_time(now_time)) + '\n')
     schedule.enter(get_wait_time(now_time), 0, execute_command, (cmd1, cmd2 ))
     schedule.run()
 
