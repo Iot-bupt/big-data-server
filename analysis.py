@@ -3,6 +3,7 @@ from config import *
 analysis = Blueprint('analysis', __name__)
 
 def get_resp(args, time_out = 90 * 1000, tenant_id = '-1', topic_type = 'data'):
+
     consumer = KafkaConsumer(str(tenant_id + '_' + topic_type),
                              bootstrap_servers=kafka_servers,
                              group_id=str(tenant_id),

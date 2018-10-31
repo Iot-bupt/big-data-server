@@ -37,17 +37,17 @@ class job(threading.Thread):
 
     def run(self):
         data = [0.] * len(self.app_input)
+        db = mysql(**self.mysql_args)
         while self.__running.isSet():
             checkout_tmp = int(time.time()) % self.timeout
             if checkout_tmp != self.checkout:
                 self.checkout = checkout_tmp
-                db = mysql(**self.mysql_args)
                 sql_select = "select * from app where app_id = %d and stop > 0" % (self.app_id)
                 if len(list(db.select(sql_select))) > 0:
                     print(self.app_id, " stoped!")
                     db.close()
                     break
-                db.close()
+                # db.close()
             self.__flag.wait()  # 为True时立即返回, 为False时阻塞直到内部的标识位为True后返回
             try:
                 msg_tmp = list(self.consumer.poll(timeout_ms=5000, max_records=1).values())[0][0]\
@@ -65,7 +65,11 @@ class job(threading.Thread):
                     if device_type in device_type2id:
                         data[device_type2id[device_type]] = item['value']
                         ret = self.model.predict([data])[0]
-                        self.producer.send(self.topic, str(ret).encode('utf-8'))
+                        #print(str(ret).encode('utf-8'))
+                        sql_update = "update app set timestamp = %d, predict = '%s'" \
+                                     "where app_id = %d" % (int(time.time()), str(ret), self.app_id)
+                        db.update(sql_update)
+                        #self.producer.send(self.topic, str(ret).encode('utf-8'))
                         print(self.app_id, " is running, predict result is ", ret)
 
     def pause(self):

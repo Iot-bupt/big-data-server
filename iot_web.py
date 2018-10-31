@@ -20,6 +20,11 @@ app.register_blueprint(hdfs, url_prefix='/api/hdfs')
 app.register_blueprint(etl, url_prefix='/api/etl')
 app.register_blueprint(mining, url_prefix='/api/mining')
 
+db = mysql(**mysql_args)
+init_sql = "update app set stop = 1"
+db.update(init_sql)
+db.close()
+
 if __name__ == '__main__':
     app.run(port=8092, host='0.0.0.0',debug=True)
 

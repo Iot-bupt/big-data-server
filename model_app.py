@@ -111,8 +111,10 @@ def start_app():
                      + " where app_id = %d" % (app_id)
         rows = list(db.select(sql_select))
         app_input = json.loads(rows[0][0])
+        ################################
         app = job(app_id, model_path, app_input, kafka_servers, timeout)
         app.start()
+        #################################
         #app2job.setdefault(app_id, app)
         sql_update = "update app set stop = 0 where app_id = %d" % (app_id)
         db.update(sql_update)
@@ -183,18 +185,29 @@ def real_predict():
         assert 'appId' in data, 'missing parameters app id!'
         app_id = data['appId']
         db = mysql(**mysql_args)
-        sql_select = "select * from app where app_id = %s and stop > 0" % (app_id)
-        if len(list(db.select(sql_select))) > 0:
+        sql_select = "select predict, timestamp  from app where app_id = %s and stop = 0" % (app_id)
+        res = list(db.select(sql_select))
+        if len(res) == 0:
             db.close()
             resp = jsonify({'app id': int(app_id), 'status': 'stoped!'})
             resp.headers['Access-Control-Allow-Origin'] = '*'
             return resp
-        consumer = KafkaConsumer(app_id,
-                                 bootstrap_servers=kafka_servers,
-                                 group_id='app_'+app_id+'_real_predict_'+str(time.time()))
-        msg_value = list(consumer.poll(timeout_ms=5000, max_records=1).values())[0][0]\
-            .value.decode('utf-8').replace('\'', '\"')
-        resp = jsonify({'app id': int(app_id), 'predict': json.loads(msg_value)})
+        #######################################
+        # import random
+        # msg_value = [random.uniform(0, 100)]
+        # resp = jsonify({'app id': int(app_id), 'predict': msg_value})
+        # resp.headers['Access-Control-Allow-Origin'] = '*'
+        # return resp
+        ########################################
+        # consumer = KafkaConsumer(app_id,
+        #                          bootstrap_servers=kafka_servers,
+        #                          group_id='app_'+app_id+'_real_predict_'+str(time.time()))
+        # msg_value = list(consumer.poll(timeout_ms=5000, max_records=1).values())[0][0]\
+        #     .value.decode('utf-8').replace('\'', '\"')
+        # resp = jsonify({'app id': int(app_id), 'predict': json.loads(msg_value)})
+        res = res[0]
+        resp = jsonify({'app id': int(app_id), 'timestamp': int(res[1]), 'predict': json.loads(res[0])})
+        print(resp)
         resp.headers['Access-Control-Allow-Origin'] = '*'
         return resp
     except Exception as e:

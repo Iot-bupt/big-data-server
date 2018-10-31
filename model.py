@@ -23,6 +23,38 @@ def save_model(data_model, model_file_name, model_file_path=model_path):
         os.makedirs(model_file_path)
     joblib.dump(data_model, model_file_path + '/' + model_file_name + '.pkl')
 
+@model.route('/get-model-id', methods=['GET', 'POST'])
+def get_model_id():
+    try:
+        data = {}
+        if request.method == 'GET':
+            data = request.args
+        elif request.method == 'POST':
+            data = request.form
+        print(data)
+        assert 'tenantId' in data, 'missing parameters tenant id!'
+        tenant_id = int(data['tenantId'])
+        sql_select = "select * from data_model where tenant_id = -1 or tenant_id = %d" % tenant_id
+        db = mysql(**mysql_args)
+        res = {'data':[]}
+        for i, item in enumerate(db.select(sql_select)):
+            tmp = {}
+            tmp['model_id'] = item[0]
+            tmp['model_name'] = item[1]
+            # tmp['model_desc'] = item[2]
+            # tmp['model_input'] = json.loads(item[3])
+            # tmp['model_state'] = item[4]
+            # tmp['model_path'] = item[5]
+            res['data'].append(tmp)
+        print(res)
+        db.close()
+        resp = jsonify(res)
+        resp.headers['Access-Control-Allow-Origin'] = '*'
+        return resp
+    except Exception as e:
+        print(e)
+        return get_error_resp(e)
+
 @model.route('/get-general-model', methods=['GET', 'POST'])
 def get_general_model():
     try:
@@ -76,7 +108,8 @@ def get_tenant_model():
             tmp['model_name'] = item[1]
             tmp['model_desc'] = item[2]
             tmp['model_input'] = json.loads(item[3])
-            tmp['model_path'] = item[4]
+            tmp['model_state'] = item[4]
+            tmp['model_path'] = item[5]
             res['data'].append(tmp)
         print(res)
         db.close()
@@ -205,8 +238,13 @@ def delete_model():
         assert 'modelId' in data, 'missing parameters model id!'
         model_id = int(data['modelId'])
         #sql_delete = "delete from data_model where tenant_id = %d and model_id = %d" % (tenant_id, model_id)
-        sql_delete = "delete from data_model where model_id = %d" % (model_id)
         db = mysql(**mysql_args)
+        sql_select = "select * from app where model_id = %d" % (model_id)
+        if len(list(db.select(sql_select))) > 0:
+            resp = jsonify({'model id': model_id, 'status': 'delete model failed, there is app crerated from this model!'})
+            resp.headers['Access-Control-Allow-Origin'] = '*'
+            return resp
+        sql_delete = "delete from data_model where model_id = %d" % (model_id)
         db.delete(sql_delete)
         db.close()
         resp = jsonify({'model id':model_id, 'status': 'delete model success!'})

@@ -5,7 +5,7 @@ def get_mysql_tables(engine):
     for table_name in [tables.iloc[i, 0] \
                        for i in range(tables.shape[0])]:
         table = {'table_name': table_name}
-        sql = 'desc %s' % table_name
+        sql = 'desc `%s`' % table_name
         each_table = pd.read_sql_query(sql, engine)
         table['columns'] = [each_table.iloc[j, 0] \
                             for j in range(each_table.shape[0])]
