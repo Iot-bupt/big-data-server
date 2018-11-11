@@ -1,8 +1,8 @@
 model_path = '/home/model/'
 kafka_servers = ['kafka-service:9092']
-mysql_args = {'host':'172.24.32.169', 'user':'root', 'passwd':'root','port':3306, 'dbname':'BUPT_IOT'}
-other_args = {'host':'172.24.32.169', 'user':'root', 'passwd':'root','port':3306, 'dbname':'BUPT_IOT'}
-cassandra_args = {'host':['39.104.165.155'], 'dbname':'bupt_iot'}
+mysql_args = {'host':'192.168.1.159', 'user':'root', 'passwd':'Huahan123','port':3306, 'dbname':'BUPT_IOT'}
+other_args = {'host':'192.168.1.159', 'user':'root', 'passwd':'Huahan123','port':3306, 'dbname':'BUPT_IOT'}
+cassandra_args = {'host':['192.168.1.159'], 'dbname':'bupt_iot'}
 
 import os, csv, json, time
 import pandas as pd
