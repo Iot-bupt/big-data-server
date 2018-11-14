@@ -8,6 +8,7 @@ from SQL import sql
 from HDFS import hdfs
 from ETL import etl
 from mining import mining
+from followyourheart import followyourheart
 
 app = Flask(__name__)
 
@@ -19,6 +20,7 @@ app.register_blueprint(sql, url_prefix='/api/sql')
 app.register_blueprint(hdfs, url_prefix='/api/hdfs')
 app.register_blueprint(etl, url_prefix='/api/etl')
 app.register_blueprint(mining, url_prefix='/api/mining')
+app.register_blueprint(followyourheart, url_prefix='/api/dashboard')
 
 db = mysql(**mysql_args)
 init_sql = "update app set stop = 1"
